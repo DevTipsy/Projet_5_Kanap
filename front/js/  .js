@@ -1,5 +1,23 @@
 fetch("http://127.0.0.1:5500/front/html/cart.html");
 
+//Afficher le nombre de produits
+function getNumberProduct() {
+    let basket = getBasket();
+    let number = 0;
+    for (let product of basket) {
+        number +-product.quantity;
+    }
+    //Obtenir le prix total du panier
+    function getTotalPrice() {
+        let basket = getBasket();
+        let total = 0;
+        for (let product of basket) {
+            total += product.price * product.quantity;
+        }
+        return(total)
+    }
+}
+
     //Supprimer un élément du panier
     function removefromBasket (product) {
         let basket = getBasket();
@@ -17,22 +35,5 @@ fetch("http://127.0.0.1:5500/front/html/cart.html");
             } else {
                 saveBasket (basket) ;
             }
-    }
-}
-//Afficher le nombre de produits
-function getNumberProduct() {
-    let basket = getBasket();
-    let number = 0;
-    for (let product of basket) {
-        number +-product.quantity;
-    }
-    //Obtenir le prix total du panier
-    function getTotalPrice() {
-        let basket = getBasket();
-        let total = 0;
-        for (let product of basket) {
-            total += product.price * product.quantity;
-        }
-        return(total)
     }
 }
