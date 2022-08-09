@@ -1,6 +1,16 @@
 //On récupére l'id via les paramètres de l'url
 const id = new URL(window.location.href).searchParams.get("_id");
 
+
+//Récupération des sélecteurs pour les futurs modifications
+let title = document.getElementById("title");
+let price = document.getElementById("price");
+let description = document.getElementById("description");
+let colorsP = document.getElementById("colors");
+let imgProduit = document.querySelector(".item__img");
+let img = document.createElement("img");
+imgProduit.appendChild(img);
+
 //On appelle la fonction (asynchrone) des détails d'un canapé
 InfoProduct();
 
@@ -14,10 +24,7 @@ async function InfoProduct() {
         let price = document.getElementById("price");
         let description = document.getElementById("description");
         let colorsP = document.getElementById("colors");
-        //On créé la balise img dans la classe item__img
-        let imgProduct = document.querySelector(".item__img");
-        let img = document.createElement("img");
-        imgProduct.appendChild(img);
+
         //On définit la source et alt de l'img
         img.setAttribute("src", item.imageUrl);
         img.setAttribute("alt", item.altTxt);
@@ -39,80 +46,94 @@ async function InfoProduct() {
     }) ;          
 }
 
+
+ //Eventlistener du bouton
+        const button = document.getElementById("addToCart");
+        button.addEventListener("click", ajoutPanier);
+        
+
+
 //Ajouter des produits au panier grâce au localstorage
 /*****************************************************/
 
-    function ajoutPanier(){
+function ajoutPanier(){
         //On sélectionne l'id colors et quantity situés dans le html
         const color = document.querySelector ("#colors");
         const quantity = document.querySelector ("#quantity");
         //Si ils remplissent la condition suivante :
-        if  (quantity.value<=100 && quantity.value>0 && color.value=="") {
+    if  (quantity.value<=100 && quantity.value>0 && color.value != 0) {
 
         if  (localStorage.getItem ("cart")) {
-            let kanapeliste = Json.parse(localStorage.getItem ("cart"));
+
+            let kanapeliste = JSON.parse(localStorage.getItem ("cart"));
+            let idP = id;
             let color = document.querySelector ("#colors");
-            let quantity =document.querySelector ("#quantity");
-            const result = kanapeliste.find (item=>item.id==id && item.color==color);
-            if (result){
-                let totalquantity = parseInt(quantity)+parseInt(result.quantity);
-                result.quantity=totalquantity;
-                localStorage.setItem("cart",Json.stringify (kanapeliste));
-            }
-            else {  //Création des éléments
-                    let kanapeliste = Json.parse(localStorage.getItem ("cart"));
+            let quantityP =document.querySelector ("#quantity");
+
+            const result = kanapeliste.find ((item)=>item.idP===id && item.color===color);
+
+                if (result){
+                    let totalquantity = parseInt(quantityP)+parseInt(result.quantityP);
+                    result.quantityP=totalquantity;
+                    localStorage.setItem("cart",JSON.stringify (kanapeliste));
+                    console.log(kanapeliste);
+                }
+                else {  //Création des éléments
+                    let kanapeliste = JSON.parse(localStorage.getItem ("cart"));
                     let idKanape = id;
-                    let title = document.getElementById("title");
-                    let price = document.getElementById("price");
-                    let description = document.getElementById("description");
-                    let colorsP = document.getElementById("colors");
-                    let img = img.src;
-                    let alt = img.alt;
+                    let title = document.querySelector("#title").textContent;
+                    let price = document.querySelector("#price").textContent;
+                    let quantity = document.querySelector("#quantity").value;
+                    let colorsP = document.querySelector("#colors").value;
+                    let imgP= img.src;
+                    let altP = img.alt;
+
                     let kanapePanier = {
                         idKanape : id,
                         title : title,
                         price: price,
-                        description : description,
-                        colorsP : colors,
-                        alt : alt,
-                        img : img
+                        quantity : quantity,
+                        colorsP : colorsP,
+                        altP : altP,
+                        imgP : imgP
                     };
                     //Liaison des élémets au panier
                     kanapeliste.push(kanapePanier);
-                    localStorage.setItem("cart",Json.stringify (kanapeliste));
-            }
-            }
-        }
+                    localStorage.setItem("cart",JSON.stringify (kanapeliste));
+                    console.log(kanapeliste);
+               }
+         }
+        
         else {
             //Initialisation du tableau
             let listeproduits = [];
             //Construction de l'objet
-            let produits = Json.parse(localStorage.getItem ("cart"));
-            let title = document.getElementById("title");
-            let price = document.getElementById("price");
-            let colorsP = document.getElementById("colors");
-            let quantity =document.querySelector ("#quantity");
-            let kanapePanier = {
-                title : title,
-                price: price,
-                colorsP : colors,
-                quantity : quantity
-            };
-            //Ajout du canapé dans le panier
-            function addPanier(product) {
-                let panier = getPanier();
-                let foundProduct = panier.find(panier => panier.id == product.id && panier.color === product.color);
-                if (foundProduct != undefined){
-                    foundProduct.quantity = parseInt(foundProduct.quantity)+ parseInt(product.quantity) ;
-                } else {
-                    panier.push(product)
-                }
-                savePanier(panier);
-            }
-        }
-        //Eventlistener du bouton
-        const button = document.getElementById("addToCart");
-        button.addEventListener("click");
-        createInfoProduct();
-    }
+            idKanape = id;
+            let title = document.querySelector("#title").textContent;
+            let price = document.querySelector("#price").textContent;
+            let colorsP = document.querySelector("#colors").value;
+            let quantity = document.querySelector ("#quantity").value;
+            let imgP = img.src;
+            let altP = img.alt;
 
+                let kanapePanier = {
+                    idKanape : id,
+                    title : title,
+                    price: price,
+                    colorsP : colorsP,
+                    quantity : quantity,
+                    imgP : imgP,
+                    altP : altP
+                };
+            //On ajoute le produit dans le tableau du Panier
+            listeproduits.push(kanapePanier);
+            localStorage.setItem("cart",JSON.stringify (listeproduits));
+            //On affiche les produits
+            console.log(listeproduits);
+        }
+    }
+}
+        //Eventlistener du bouton
+        const bouton = document.getElementById("addToCart");
+        bouton.addEventListener("click");
+        createInfoProduct();
