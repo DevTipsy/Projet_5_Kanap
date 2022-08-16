@@ -46,12 +46,9 @@ async function InfoProduct() {
     }) ;          
 }
 
-
  //Eventlistener du bouton
         const button = document.getElementById("addToCart");
         button.addEventListener("click", ajoutPanier);
-        
-
 
 //Ajouter des produits au panier grâce au localstorage
 /*****************************************************/
@@ -133,7 +130,3 @@ function ajoutPanier(){
         }
     }
 }
-        //Eventlistener du bouton
-        const bouton = document.getElementById("addToCart");
-        bouton.addEventListener("click");
-        createInfoProduct();
