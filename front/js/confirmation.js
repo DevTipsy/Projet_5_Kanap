@@ -1,1 +1,5 @@
-fetch("http://127.0.0.1:5500/front/html/confirmation.html");
+const str = window.location;
+const url = new URL(str);
+const id = url.searchParams.get("id");
+const orderId = document.getElementById("orderId");
+orderId.innerHTML = id;
