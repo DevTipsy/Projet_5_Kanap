@@ -54,79 +54,79 @@ async function InfoProduct() {
 /*****************************************************/
 
 function ajoutPanier(){
-        //On sélectionne l'id colors et quantity situés dans le html
-        const color = document.querySelector ("#colors");
-        const quantity = document.querySelector ("#quantity");
-        //Si ils remplissent la condition suivante :
-    if  (quantity.value<=100 && quantity.value>0 && color.value != 0) {
+    //On sélectionne l'id colors et quantity situés dans le html
+    const color = document.querySelector ("#colors");
+    const quantity = document.querySelector ("#quantity");
+    //Si ils remplissent la condition suivante :
+if  (quantity.value<=100 && quantity.value>0 && color.value != 0) {
 
-        if  (localStorage.getItem ("cart")) {
+    if  (localStorage.getItem ("cart")) {
 
-            let kanapeliste = JSON.parse(localStorage.getItem ("cart"));
-            let idP = id;
-            let color = document.querySelector ("#colors");
-            let quantityP =document.querySelector ("#quantity");
+        let kanapeliste = JSON.parse(localStorage.getItem ("cart"));
+        let idP = id;
+        let color = document.querySelector ("#colors");
+        let quantityP =document.querySelector ("#quantity");
 
-            const result = kanapeliste.find ((item)=>item.idP===id && item.color===color);
+        const result = kanapeliste.find ((item)=>item.idP===id && item.color===color);
 
-                if (result){
-                    let totalquantity = parseInt(quantityP)+parseInt(result.quantityP);
-                    result.quantityP=totalquantity;
-                    localStorage.setItem("cart",JSON.stringify (kanapeliste));
-                    console.log(kanapeliste);
-                }
-                else {  //Création des éléments
-                    let kanapeliste = JSON.parse(localStorage.getItem ("cart"));
-                    let idKanape = id;
-                    let title = document.querySelector("#title").textContent;
-                    let price = document.querySelector("#price").textContent;
-                    let quantity = document.querySelector("#quantity").value;
-                    let colorsP = document.querySelector("#colors").value;
-                    let imgP= img.src;
-                    let altP = img.alt;
-
-                    let kanapePanier = {
-                        idKanape : id,
-                        title : title,
-                        price: price,
-                        quantity : quantity,
-                        colorsP : colorsP,
-                        altP : altP,
-                        imgP : imgP
-                    };
-                    //Liaison des élémets au panier
-                    kanapeliste.push(kanapePanier);
-                    localStorage.setItem("cart",JSON.stringify (kanapeliste));
-                    console.log(kanapeliste);
-               }
-         }
-        
-        else {
-            //Initialisation du tableau
-            let listeproduits = [];
-            //Construction de l'objet
-            idKanape = id;
-            let title = document.querySelector("#title").textContent;
-            let price = document.querySelector("#price").textContent;
-            let colorsP = document.querySelector("#colors").value;
-            let quantity = document.querySelector ("#quantity").value;
-            let imgP = img.src;
-            let altP = img.alt;
+            if (result){
+                let totalquantity = parseInt(quantityP)+parseInt(result.quantityP);
+                result.quantityP=totalquantity;
+                localStorage.setItem("cart",JSON.stringify (kanapeliste));
+                console.log(kanapeliste);
+            }
+            else {  //Création des éléments
+                let kanapeliste = JSON.parse(localStorage.getItem ("cart"));
+                let idKanape = id;
+                let title = document.querySelector("#title").textContent;
+                let price = document.querySelector("#price").textContent;
+                let quantity = document.querySelector("#quantity").value;
+                let colorsP = document.querySelector("#colors").value;
+                let imgP= img.src;
+                let altP = img.alt;
 
                 let kanapePanier = {
                     idKanape : id,
                     title : title,
                     price: price,
-                    colorsP : colorsP,
                     quantity : quantity,
-                    imgP : imgP,
-                    altP : altP
+                    colorsP : colorsP,
+                    altP : altP,
+                    imgP : imgP
                 };
-            //On ajoute le produit dans le tableau du Panier
-            listeproduits.push(kanapePanier);
-            localStorage.setItem("cart",JSON.stringify (listeproduits));
-            //On affiche les produits
-            console.log(listeproduits);
-        }
+                //Liaison des élémets au panier
+                kanapeliste.push(kanapePanier);
+                localStorage.setItem("cart",JSON.stringify (kanapeliste));
+                console.log(kanapeliste);
+           }
+     }
+    
+    else {
+        //Initialisation du tableau
+        let listeproduits = [];
+        //Construction de l'objet
+        idKanape = id;
+        let title = document.querySelector("#title").textContent;
+        let price = document.querySelector("#price").textContent;
+        let colorsP = document.querySelector("#colors").value;
+        let quantity = document.querySelector ("#quantity").value;
+        let imgP = img.src;
+        let altP = img.alt;
+
+            let kanapePanier = {
+                idKanape : id,
+                title : title,
+                price: price,
+                colorsP : colorsP,
+                quantity : quantity,
+                imgP : imgP,
+                altP : altP
+            };
+        //On ajoute le produit dans le tableau du Panier
+        listeproduits.push(kanapePanier);
+        localStorage.setItem("cart",JSON.stringify (listeproduits));
+        //On affiche les produits
+        console.log(listeproduits);
     }
+}
 }
