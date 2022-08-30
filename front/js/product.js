@@ -96,6 +96,7 @@ function ajoutPanier(){
                     };
                     //Liaison des élémets au panier
                     kanapeliste.push(kanapePanier);
+                    alert("Produit ajouté au panier");
                     localStorage.setItem("cart",JSON.stringify (kanapeliste));
                     console.log(kanapeliste);
             }

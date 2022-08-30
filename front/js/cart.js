@@ -93,7 +93,7 @@ if (!KanapStorage) {
         
     }    
     totalQuantity();
-    totalPrice(totalPrices);
+    totalPrice();
 }
 modifQuantity();
 deleteArticle();
@@ -110,10 +110,15 @@ totalQuantity.innerText = totalQuant;
 }
 
 // Calcul du total prix
-function totalPrice(totalPrices){
-    let totPrice = document.getElementById('totalPrice');
-    totPrice.innerText = totalPrice;
-}
+function totalPrice(){
+    let quantity = document.querySelectorAll('.itemQuantity');
+    let price = document.querySelectorAll('.itemPrice');
+    totalPrix = 0;
+    for (let i = 0; i < price.length; ++i) {
+        totalPrix += price[i].valueAsNumber;
+    }
+    totalPrice.innerText = totalPrix;
+    }
 
 // Modification de la quantité
 function modifQuantity() {
@@ -123,41 +128,42 @@ quantity.forEach((target) => {
     let id = article.dataset.id;
     let color = article.dataset.color;
     target.addEventListener("change" , () => {
-        let index = panier.findIndex((element) => element.id == id && element.color == color );
-        let quantityCart = panier.quantity;
+        let index = cart.findIndex((element) => element.id == id && element.color == color );
+        let quantityCart = cart.quantity;
         let modifQuantity = target.valueAsNumber;
         if (quantityCart != modifQuantity && modifQuantity > 0){
-            panier[index].quantity = modifQuantity
-            localStorage.setItem("panier", JSON.stringify(panier));
+            cart[index].quantity = modifQuantity
+            localStorage.setItem("panier", JSON.stringify(cart));
             document.location.reload();
         }else if (modifQuantity <= 0){
-            alert("veuillez entrer une valeur supérieur à 0 ou cliquez sur le boutton supprimer afin de le retirer du panier");
+            alert("Entrez une valeur de 1 à 100");
             document.location.reload();
         }
     })
 })
 }
 
-window.onload = () => {
-    let productDeleted = document.getElementsByClassName("deleteItem");
-    for (let i = 0; i < productDeleted.length; i++) {
-      productDeleted[i].addEventListener("click", (e) => {
-        let articleDOM = productDeleted[i].closest("article");
-        const productToClear = dataStorage.indexOf(dataStorage[i]);
-        dataStorage.splice(productToClear, 1);
-        articleDOM.remove();
-        if (localStorage != undefined) {
-          localStorage.setItem("panier", JSON.stringify(dataStorage));
-        } else {
-          localStorage.clear();
-        }
-        totalRefresh();
-        console.log("Produit supprimé du panier");
-        location.reload()
-      });
-    }
-  };
-  
+// Suppression d'un produit
+function deleteArticle() {
+let btnDelete = document.querySelectorAll(".deleteItem");
+btnDelete.forEach((target) => {
+    let article = target.closest("article");
+    let id = article.dataset.id;
+    let color = article.dataset.color;
+    target.addEventListener("click" , () => {
+
+        //Selection de l'element à supprimer en fonction de son id ET sa couleur
+        panier = panier.filter((element) => element.id !== id || element.color !== color );
+
+        // Mise à jour du localstorage
+        localStorage.setItem("panier", JSON.stringify(panier));
+        
+        //Alerte produit supprimé
+        alert("Produit supprimé");
+        document.location.reload();
+    })
+})
+}
 
 // REGEX
 let emailRegExp = new RegExp('^[A-Za-z0-9.-_]+[@]{1}[A-Za-z0-9.-_]+[.]{1}[a-z]{2,}$');
@@ -252,7 +258,7 @@ let resAdress = validAddress(inputAdress);
 let resCity = validCity(inputCity);
 let resMail = validEmail(inputMail);
 
-// si toutes les validations sont vraies, la requète au serveur peut être effectuée
+// si toutes les validations sont à true la requète au serveur peut être effectuée
 if (panier == "") {
     alert("Votre panier est vide :(")
 }else if (resFirstName && resLastName && resAdress && resCity && resMail && panier != "" ) {
