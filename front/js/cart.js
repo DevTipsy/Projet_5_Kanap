@@ -90,58 +90,71 @@ if (!KanapStorage) {
         productItemContentSettingsDelete.appendChild(productSupprimer);
         productSupprimer.className = "deleteItem";
         productSupprimer.innerHTML = "Supprimer";
+        productSupprimer.addEventListener("click", (e) => {
+            e.preventDefault;
         
-    }    
-    totalQuantity();
-    totalPrice();
-}
-modifQuantity();
-deleteArticle();
+            // enregistrer l'id et la couleur séléctionnés par le bouton supprimer
+            let deleteId = KanapStorage[i].id;
+            let deleteColor = KanapStorage[i].colorsP;
 
-// Calcul de la quantité totale
-function totalQuantity(){
-let quantity = document.querySelectorAll('.itemQuantity');
-let totalQuantity = document.getElementById('totalQuantity');
-totalQuant = 0;
-for (let i = 0; i < quantity.length; ++i) {
-    totalQuant += quantity[i].valueAsNumber;
-}
-totalQuantity.innerText = totalQuant;
-}
+            // filtrer l'élément cliqué par le bouton supprimer
+            KanapStorage = KanapStorage.filter( elt => elt.id !== deleteId || elt.colorsP !== deleteColor);
+
+            // envoyer les nouvelles données dans le localStorage
+            localStorage.setItem('cart', JSON.stringify(KanapStorage));               
+
+            // avertir de la suppression et recharger la page
+            alert('Votre article a bien été supprimé.');
+            
+            //Si pas de produits dans le local storage on affiche que le panier est vide
+            if (KanapStorage.length === 0) {
+                localStorage.clear();
+            }
+            //Refresh rapide de la page
+            location.reload();
+        });
+    }
+        
+    }
 
 // Calcul du total prix
-function totalPrice(){
-    let quantity = document.querySelectorAll('.itemQuantity');
-    let price = document.querySelectorAll('.itemPrice');
-    totalPrix = 0;
-    for (let i = 0; i < price.length; ++i) {
-        totalPrix += price[i].valueAsNumber;
+    function total(){
+        let quantity = document.querySelectorAll('.itemQuantity');
+        let totalQuantity = document.getElementById('totalQuantity');
+        totalQuant = 0;
+        for (let i = 0; i < quantity.length; ++i) {
+            totalQuant += quantity[i].valueAsNumber;
+        }
+        totalQuantity.innerText = totalQuant;
+    
+        let productTotalPrice = document.getElementById('totalPrice');
+        // Récupération du prix total
+       let totalPrice = 0;
+        for (var i = 0; i < quantity.length; ++i) {
+            totalPrice += (quantity[i].valueAsNumber * KanapStorage[i].price);
+        }
+        productTotalPrice.innerHTML = totalPrice;
     }
-    totalPrice.innerText = totalPrix;
-    }
+total();
 
 // Modification de la quantité
-function modifQuantity() {
-let quantity = document.querySelectorAll(".itemQuantity");
-quantity.forEach((target) => {
-    let article = target.closest("article");
-    let id = article.dataset.id;
-    let color = article.dataset.color;
-    target.addEventListener("change" , () => {
-        let index = cart.findIndex((element) => element.id == id && element.color == color );
-        let quantityCart = cart.quantity;
-        let modifQuantity = target.valueAsNumber;
-        if (quantityCart != modifQuantity && modifQuantity > 0){
-            cart[index].quantity = modifQuantity
-            localStorage.setItem("panier", JSON.stringify(cart));
-            document.location.reload();
-        }else if (modifQuantity <= 0){
-            alert("Entrez une valeur de 1 à 100");
-            document.location.reload();
+    function modifQuantity() {
+        let quantityModif = document.querySelectorAll("itemQuantity");
+        for (let i =0; i < quantityModif.length; i++) {
+            quantityModif[i].addEventListener("change",(event)=>{
+                event.preventDefault();
+                let qttModif = KanapStorage[i].quantity;
+                let qttModifValue = quantityModif[i].valueAsNumber;
+                const result = KanapStorage.find((el)=>(qttModifValue != qttModif));
+                result.quantity = quantityModifValue;
+                KanapStorage[i].quantity = result.quantity;
+                localStorage.setItem("cart", JSon.stringify(KanapStorage));
+                location.reload();
+            })
         }
-    })
-})
-}
+    }
+modifQuantity();
+
 
 // Suppression d'un produit
 function deleteArticle() {
