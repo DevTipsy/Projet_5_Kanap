@@ -73,7 +73,7 @@ if (!KanapStorage) {
         // Insertion de la quantité
         let productQuantity = document.createElement("input");
         productItemContentSettingsQuantity.appendChild(productQuantity);
-        productQuantity.value = KanapStorage[i].qtyKanap;
+        productQuantity.value = KanapStorage[i].quantity;
         productQuantity.className = "itemQuantity";
         productQuantity.setAttribute("type", "number");
         productQuantity.setAttribute("min", "1");
@@ -93,7 +93,7 @@ if (!KanapStorage) {
         
     }    
     totalQuantity();
-    displayTotalPrice(totalPrice);
+    totalPrice(totalPrices);
 }
 modifQuantity();
 deleteArticle();
@@ -109,10 +109,10 @@ for (let i = 0; i < quantity.length; ++i) {
 totalQuantity.innerText = totalQuant;
 }
 
-// Calcul du prix total
-function displayTotalPrice(totalPrices){
-let totPrice = document.getElementById('totalPrice');
-totPrice.innerText = totalPrices;
+// Calcul du total prix
+function totalPrice(totalPrices){
+    let totPrice = document.getElementById('totalPrice');
+    totPrice.innerText = totalPrice;
 }
 
 // Modification de la quantité
@@ -123,12 +123,12 @@ quantity.forEach((target) => {
     let id = article.dataset.id;
     let color = article.dataset.color;
     target.addEventListener("change" , () => {
-        let index = cart.findIndex((element) => element.id == id && element.color == color );
-        let quantityCart = cart.quantity;
+        let index = panier.findIndex((element) => element.id == id && element.color == color );
+        let quantityCart = panier.quantity;
         let modifQuantity = target.valueAsNumber;
         if (quantityCart != modifQuantity && modifQuantity > 0){
-            cart[index].quantity = modifQuantity
-            localStorage.setItem("panier", JSON.stringify(cart));
+            panier[index].quantity = modifQuantity
+            localStorage.setItem("panier", JSON.stringify(panier));
             document.location.reload();
         }else if (modifQuantity <= 0){
             alert("veuillez entrer une valeur supérieur à 0 ou cliquez sur le boutton supprimer afin de le retirer du panier");
@@ -138,27 +138,36 @@ quantity.forEach((target) => {
 })
 }
 
-// Suppression d'un produit
-function deleteArticle() {
-let btnDelete = document.querySelectorAll(".deleteItem");
-btnDelete.forEach((target) => {
-    let article = target.closest("article");
-    let id = article.dataset.id;
-    let colorsP = article.dataset.color;
-    target.addEventListener("click" , () => {
+window.onload = () => {
+    let productDeleted = document.getElementsByClassName("deleteItem");
+    for (let i = 0; i < productDeleted.length; i++) {
+      productDeleted[i].addEventListener("click", (e) => {
+        let articleDOM = productDeleted[i].closest("article");
+        const productToClear = dataStorage.indexOf(dataStorage[i]);
+        dataStorage.splice(productToClear, 1);
+        articleDOM.remove();
+        if (localStorage != undefined) {
+          localStorage.setItem("panier", JSON.stringify(dataStorage));
+        } else {
+          localStorage.clear();
+        }
+        totalRefresh();
+        console.log("Produit supprimé du panier");
+        location.reload()
+      });
+    }
+  };
+  
 
-        //Selection de l'element à supprimer en fonction de son id ET sa couleur
-        panier = panier.filter((element) => element.id !== id || element.color !== color );
+// REGEX
+let emailRegExp = new RegExp('^[A-Za-z0-9.-_]+[@]{1}[A-Za-z0-9.-_]+[.]{1}[a-z]{2,}$');
+let caractRegExp = new RegExp("^[A-Za-zàâäéèêëïîôöùûüç'-]+$");
+let cityRegExp = new RegExp("^[A-Za-zàâäéèêëïîôöùûüç '-]+$");
+let addressRegExp = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-A-Za-zàâäéèêëïîôöùûüç]+)+");
 
-        // Mise à jour du localstorage
-        localStorage.setItem("panier", JSON.stringify(panier));
-        
-        //Alerte produit supprimé
-        alert("Produit supprimé");
-        document.location.reload();
-    })
-})
-}
+// Déclaration du bouton commander et envoi du formulaire
+const btn_commander = document.getElementById("order");
+btn_commander.addEventListener("click", (event) => submitForm(event));
 
 //validation du prénom
 function validFirstName(inputFirstName) {
@@ -236,14 +245,14 @@ let inputAdress = document.getElementById('address');
 let inputCity = document.getElementById('city');
 let inputMail = document.getElementById('email');
 
-// récupération de la validité des informations.
+// Vérification des informations.
 let resFirstName = validFirstName(inputName);
 let resLastName = validLastName(inputLastName);
 let resAdress = validAddress(inputAdress);
 let resCity = validCity(inputCity);
 let resMail = validEmail(inputMail);
 
-// si toutes les validations sont à true la requète au serveur peut être effectuée
+// si toutes les validations sont vraies, la requète au serveur peut être effectuée
 if (panier == "") {
     alert("Votre panier est vide :(")
 }else if (resFirstName && resLastName && resAdress && resCity && resMail && panier != "" ) {
@@ -254,7 +263,7 @@ if (panier == "") {
         idPanier.push(panier[i].id);
     }
     
-    // création de l'objet que doit recevoir le back
+    // Création de l'objet
     const order = {
         contact : {
             firstName: inputName.value,
@@ -266,7 +275,7 @@ if (panier == "") {
         products: idPanier,
     } 
 
-    // Option de configuration de la requete post
+    // Requête post
     const options = {
         method: 'POST',
         body: JSON.stringify(order),
