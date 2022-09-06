@@ -1,5 +1,7 @@
-const str = window.location;
-const url = new URL(str);
-const id = url.searchParams.get("id");
-const orderId = document.getElementById("orderId");
-orderId.innerHTML = id;
+function confirmation(){
+    let url = new URL(window.location.href);
+    let id = url.searchParams.get("_id");
+    const orderId = document.getElementById("orderId");
+    orderId.innerHTML = id;
+}
+
