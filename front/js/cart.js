@@ -4,36 +4,33 @@
     let cityRegExp = new RegExp("^[A-Za-zàâäéèêëïîôöùûüç '-]+$");
     let addressRegExp = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-A-Za-zàâäéèêëïîôöùûüç]+)+");
 
-    // Déclaration du bouton "commander" et envoi du formulaire
-    const btn_commander = document.getElementById("order");
-    btn_commander.addEventListener("click", (event) => submitForm(event));
 
-let KanapStorage = JSON.parse(localStorage.getItem("cart"));
 
-if (!KanapStorage) {
+    let KanapStorage = JSON.parse(localStorage.getItem("cart"));
 
-    const titleCart = document.querySelector("h1");
-    const sectionCart = document.querySelector(".cart");
-
-    titleCart.innerHTML = "Votre panier est vide !";
-    sectionCart.style.display = "none";
-}
-
-    else {
-
+    if (!KanapStorage) {
+    
+        const titleCart = document.querySelector("h1");
+        const sectionCart = document.querySelector(".cart");
+    
+        titleCart.innerHTML = "Votre panier est vide !";
+        sectionCart.style.display = "none";
+    
+    } else {
+    
         for (let i=0; i < KanapStorage.length; i++) {
-
+    
             // Création de la balise "article" et insertion dans la section
             let productArticle = document.createElement("article");
             document.querySelector("#cart__items").appendChild(productArticle);
             productArticle.className = "cart__item";
             productArticle.setAttribute("data-id", KanapStorage[i].id);
-
+    
             // Insertion de l'élément "div" pour l'image produit
             let productDivImg = document.createElement("div");
             productArticle.appendChild(productDivImg);
             productDivImg.className = "cart__item__img";
-
+    
             // Insertion de l'image
             let productImg = document.createElement("img");
             productDivImg.appendChild(productImg);
@@ -44,7 +41,7 @@ if (!KanapStorage) {
             let productItemContent = document.createElement("div");
             productArticle.appendChild(productItemContent);
             productItemContent.className = "cart__item__content";
-
+    
             // Insertion de l'élément "div"
             let productItemContentTitlePrice = document.createElement("div");
             productItemContent.appendChild(productItemContentTitlePrice);
@@ -54,23 +51,23 @@ if (!KanapStorage) {
             let productTitle = document.createElement("h2");
             productItemContentTitlePrice.appendChild(productTitle);
             productTitle.innerHTML = KanapStorage[i].title;
-
+    
             // Insertion de la couleur
             let productColor = document.createElement("p");
             productTitle.appendChild(productColor);
             productColor.innerHTML = KanapStorage[i].colorsP;
             productColor.style.fontSize = "20px";
-
+    
             // Insertion du prix
             let productPrice = document.createElement("p");
             productItemContentTitlePrice.appendChild(productPrice);
             productPrice.innerHTML = KanapStorage[i].price + " €";
-
+    
             // Insertion de l'élément "div"
             let productItemContentSettings = document.createElement("div");
             productItemContent.appendChild(productItemContentSettings);
             productItemContentSettings.className = "cart__item__content__settings";
-
+    
             // Insertion de l'élément "div"
             let productItemContentSettingsQuantity = document.createElement("div");
             productItemContentSettings.appendChild(productItemContentSettingsQuantity);
@@ -80,7 +77,7 @@ if (!KanapStorage) {
             let productQty = document.createElement("p");
             productItemContentSettingsQuantity.appendChild(productQty);
             productQty.innerHTML = "Qté : ";
-
+    
             // Insertion de la quantité
             let productQuantity = document.createElement("input");
             productItemContentSettingsQuantity.appendChild(productQuantity);
@@ -90,103 +87,94 @@ if (!KanapStorage) {
             productQuantity.setAttribute("min", "1");
             productQuantity.setAttribute("max", "100");
             productQuantity.setAttribute("name", "itemQuantity");
-
+    
             // Insertion de l'élément "div"
             let productItemContentSettingsDelete = document.createElement("div");
             productItemContentSettings.appendChild(productItemContentSettingsDelete);
             productItemContentSettingsDelete.className = "cart__item__content__settings__delete";
-
+    
             // Insertion de "p" supprimer
             let productSupprimer = document.createElement("p");
             productItemContentSettingsDelete.appendChild(productSupprimer);
             productSupprimer.className = "deleteItem";
             productSupprimer.innerHTML = "Supprimer";
-            productSupprimer.addEventListener("click", (e) => {
-                e.preventDefault;
-
-                // On enregistre l'id et la couleur du produit à supprimer
-                let deleteId = KanapStorage[i].id;
-                let deleteColor = KanapStorage[i].colorsP;
-                // On filtre l'élément cliqué par le bouton supprimer
-                KanapStorage = KanapStorage.filter( elt => elt.id !== deleteId || elt.colorsP !== deleteColor);
-                // On envoie les nouvelles données dans le localStorage
-                localStorage.setItem('cart', JSON.stringify(KanapStorage));
-                // Message de confirmation de suppression d'article
-                alert('Votre article a bien été supprimé.');
-                // Si il n'y a pas de produits dans le panier, on vide le localstorage
-                if (KanapStorage.length === 0) {
-                    localStorage.clear();
-                }
-                // Puis on recharge la page automatiquement
-                location.reload();
-            });
-        }
+            productSupprimer.addEventListener('click', (e) => {
+              e.preventDefault;
+          
+              // enregistrer l'id et la couleur séléctionnés par le bouton supprimer
+              let deleteId = KanapStorage[i].id;
+              let deleteColor = KanapStorage[i].colorsP;
+      
+              // filtrer l'élément cliqué par le bouton supprimer
+              KanapStorage = KanapStorage.filter( elt => elt.id !== deleteId || elt.colorsP !== deleteColor);
+      
+              // envoyer les nouvelles données dans le localStorage
+              localStorage.setItem('cart', JSON.stringify(KanapStorage));               
+      
+              // avertir de la suppression et recharger la page
+              alert('Votre article a bien été supprimé.');
+              
+              //Si pas de produits dans le local storage on affiche que le panier est vide
+              if (KanapStorage.length === 0) {
+                  localStorage.clear();
+              }
+              //Refresh rapide de la page
+              location.reload();
+          });
             
+        }
     }
-
-    // Calcul de la quantité et du prix total
+    
+    // Calcul de la quantité totale
     function total(){
-        // On sélectionne les balises pour le prix total et on les insère via innerhtml et innertext
         let quantity = document.querySelectorAll('.itemQuantity');
         let totalQuantity = document.getElementById('totalQuantity');
         totalQuant = 0;
-        // On insère le texte pour la quantité totale
         for (let i = 0; i < quantity.length; ++i) {
             totalQuant += quantity[i].valueAsNumber;
         }
         totalQuantity.innerText = totalQuant;
+    
         let productTotalPrice = document.getElementById('totalPrice');
-        // Récupération du prix total+formule de calcul
+        // Récupération du prix total
        let totalPrice = 0;
         for (var i = 0; i < quantity.length; ++i) {
             totalPrice += (quantity[i].valueAsNumber * KanapStorage[i].price);
         }
+    
+       
         productTotalPrice.innerHTML = totalPrice;
     }
+    
     total();
-
-// Modification de la quantité
-function modifQuantity() {
-    let quantity = document.querySelectorAll(".itemQuantity");
-    quantity.forEach((target) => {
-        let KanapStorage = target.closest("article");
-        let id = KanapStorage[i].id;
-        let color = KanapStorage[i].color;
-        target.addEventListener("change" , () => {
-            let index = panier.findIndex((element) => element.id == id && element.color == color );
-            let quantityCart = panier.quantity;
-            let modifQuantity = target.valueAsNumber;
-            if (quantityCart != modifQuantity && modifQuantity > 0){
-                panier[index].quantity = modifQuantity
-                localStorage.setItem("panier", JSON.stringify(panier));
-                document.location.reload();
-            }else if (modifQuantity <= 0){
-                alert("Entrez une quantité entre 0 et 100 ou supprimez l'article du panier");
-                location.reload();
+    
+    
+     modifyQtt();
+    
+    function modifyQtt() {
+            let qttModif = document.querySelectorAll(".itemQuantity");
+        
+            for (let k= 0; k < qttModif.length; k++){
+                qttModif[k].addEventListener("change" , (event) => 
+                {
+                    event.preventDefault();
+        
+                    //Selection de l'element à modifier en fonction de son id ET sa couleur
+                    let quantityModif = KanapStorage[k].quantity;
+                    let qttModifValue = qttModif[k].valueAsNumber;
+                    
+                    const resultFind = KanapStorage.find((el) => el.qttModifValue !== quantityModif);
+        
+                    resultFind.quantity = qttModifValue;
+                    KanapStorage[k].quantity = resultFind.quantity;
+                    
+                    localStorage.setItem("cart", JSON.stringify(KanapStorage));
+                
+                    // refresh rapide
+                    location.reload();
+                })
             }
-        })
-    })
-}
-
-
-    // Suppression d'un produit
-    function deleteArticle() {
-        let btnDelete = document.querySelectorAll(".deleteItem");
-            btnDelete.forEach((target) => {
-            let article = target.closest("article");
-            let id = article.dataset.id;
-            let color = article.dataset.color;
-            target.addEventListener("click" , () => {
-                //Selection de l'element à supprimer en fonction de son id et de sa couleur
-                panier = panier.filter((element) => element.id !== id || element.color !== color );
-                // Mise à jour du localstorage
-                localStorage.setItem("panier", JSON.stringify(panier));
-                //Alerte produit supprimé
-                alert("Produit supprimé");
-                document.location.reload();
-            })
-        })
-    }
+        }
 
     // Validation du prénom
     function validFirstName(inputFirstName) {
@@ -250,6 +238,10 @@ function modifQuantity() {
         }
     };
 
+    // Déclaration du bouton "commander" et envoi du formulaire
+    const btn_commander = document.getElementById("order");
+    btn_commander.addEventListener("click", (event) => submitForm(event));
+
     //Envoi des informations client au localstorage après validation
     function submitForm(event){
         event.preventDefault();
@@ -272,12 +264,12 @@ function modifQuantity() {
         if (panier == "") {
                 alert("Votre panier est vide :(")
             }
-                else if (resFirstName && resLastName && resAdress && resCity && resMail && panier != "" ) {
+                else if (resFirstName && resLastName && resAdress && resCity && resMail && KanapStorage != "" ) {
                     
                     // Construction d'un tableau depuis le localstorage
                     let idPanier = [];
-                    for (let i = 0; i<panier.length;i++) {
-                        idPanier.push(panier[i].id);
+                    for (let i = 0; i<KanapStorage.length;i++) {
+                        idPanier.push(KanapStorage[i].id);
                     }
                     
                     // Création de l'objet
