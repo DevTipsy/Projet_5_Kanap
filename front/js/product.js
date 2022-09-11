@@ -45,11 +45,10 @@ async function InfoProduct() {
         }  
     }) ;          
 }
-
  //Eventlistener du bouton
-        const button = document.getElementById("addToCart");
-        button.addEventListener("click", ajoutPanier);
-
+ const button = document.getElementById("addToCart");
+ button.addEventListener("click", ajoutPanier);
+ 
 //Ajouter des produits au panier grâce au localstorage
 /*****************************************************/
 
@@ -96,9 +95,9 @@ function ajoutPanier(){
                     };
                     //Liaison des élémets au panier
                     kanapeliste.push(kanapePanier);
-                    alert("Produit ajouté au panier");
                     localStorage.setItem("cart",JSON.stringify (kanapeliste));
                     console.log(kanapeliste);
+                    alert("Produit ajouté au panier");
             }
         }
     
