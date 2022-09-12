@@ -101,32 +101,32 @@ function ajoutPanier(){
             }
         }
     
-    else {
-        //Initialisation du tableau
-        let listeproduits = [];
-        //Construction de l'objet
-        idKanape = id;
-        let title = document.querySelector("#title").textContent;
-        let price = document.querySelector("#price").textContent;
-        let colorsP = document.querySelector("#colors").value;
-        let quantity = document.querySelector ("#quantity").value;
-        let imgP = img.src;
-        let altP = img.alt;
+        else {
+            //Initialisation du tableau
+            let listeproduits = [];
+            //Construction de l'objet
+            idKanape = id;
+            let title = document.querySelector("#title").textContent;
+            let price = document.querySelector("#price").textContent;
+            let colorsP = document.querySelector("#colors").value;
+            let quantity = document.querySelector ("#quantity").value;
+            let imgP = img.src;
+            let altP = img.alt;
 
-            let kanapePanier = {
-                idKanape : id,
-                title : title,
-                price: price,
-                colorsP : colorsP,
-                quantity : quantity,
-                imgP : imgP,
-                altP : altP
-            };
-        //On ajoute le produit dans le tableau du Panier
-        listeproduits.push(kanapePanier);
-        localStorage.setItem("cart",JSON.stringify (listeproduits));
-        //On affiche les produits
-        console.log(listeproduits);
+                let kanapePanier = {
+                    idKanape : id,
+                    title : title,
+                    price: price,
+                    colorsP : colorsP,
+                    quantity : quantity,
+                    imgP : imgP,
+                    altP : altP
+                };
+            //On ajoute le produit dans le tableau du Panier
+            listeproduits.push(kanapePanier);
+            localStorage.setItem("cart",JSON.stringify (listeproduits));
+            //On affiche les produits
+            console.log(listeproduits);
+        }
     }
-}
 }
