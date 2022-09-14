@@ -1,5 +1,8 @@
+const url = 'http://localhost:3000/api/products/';
+
 // On récupère l'élément cart situé dans le localstorage
 let KanapStorage = JSON.parse(localStorage.getItem('cart'));
+
 // On sélectionne le titre et la classe "cart"
 if (!KanapStorage) {
     const titleCart = document.querySelector('h1');
@@ -7,7 +10,7 @@ if (!KanapStorage) {
     // On insère un message si le panier est vide
     titleCart.innerHTML = 'Votre panier est vide !';
     sectionCart.style.display = 'none';
-// Si le localstorage n'est pas vide on insère les caractéristiques des produits
+    // Si le localstorage n'est pas vide on insère les caractéristiques des produits
 } else {
     for (let i = 0; i < KanapStorage.length; i++) {
         // Création de la balise "article" et insertion dans la section
@@ -41,7 +44,7 @@ if (!KanapStorage) {
         // Insertion du titre h2
         let productTitle = document.createElement('h2');
         productItemContentTitlePrice.appendChild(productTitle);
-        productTitle.innerHTML = KanapStorage[i].title;
+        productTitle.innerHTML = KanapStorage[i].nameKanap;
 
         // Insertion de la couleur
         let productColor = document.createElement('p');
@@ -52,7 +55,7 @@ if (!KanapStorage) {
         // Insertion du prix
         let productPrice = document.createElement('p');
         productItemContentTitlePrice.appendChild(productPrice);
-        productPrice.innerHTML = KanapStorage[i].price + ' €';
+        productPrice.innerHTML = KanapStorage[i].price + '  ' + ' €';
 
         // Insertion de l'élément "div"
         let productItemContentSettings = document.createElement('div');
@@ -75,7 +78,7 @@ if (!KanapStorage) {
         // Insertion de la quantité
         let productQuantity = document.createElement('input');
         productItemContentSettingsQuantity.appendChild(productQuantity);
-        productQuantity.value = KanapStorage[i].quantity;
+        productQuantity.value = KanapStorage[i].qtyKanap;
         productQuantity.className = 'itemQuantity';
         productQuantity.setAttribute('type', 'number');
         productQuantity.setAttribute('min', '1');
@@ -127,7 +130,7 @@ if (!KanapStorage) {
 function total() {
     let quantity = document.querySelectorAll('.itemQuantity');
     let totalQuantity = document.getElementById('totalQuantity');
-    totalQuant = 0;
+    let totalQuant = 0;
     // On incrémente la quantité
     for (let i = 0; i < quantity.length; i++) {
         totalQuant += quantity[i].valueAsNumber;
@@ -150,37 +153,41 @@ total();
 
 // Fonction pour modifier dynamiquement la quantité
 function modifyQtt() {
-        let qttModif = document.querySelectorAll(".itemQuantity");
-        // On incrémente la quantité modifiée
-        for (let k= 0; k < qttModif.length; k++){
-            // On écoute les quantités modifiées
-            qttModif[k].addEventListener("change" , (event) => 
-            {   // On annule l'évènement exécuté par le navigateur
-                event.preventDefault();
-                //Selection de l'element à modifier en fonction de son id ET sa couleur
-                let quantityModif = KanapStorage[k].quantity;
-                let qttModifValue = qttModif[k].valueAsNumber;
-                // On demande la première valeur trouvée dans le tableau
-                const resultFind = KanapStorage.find((el) => el.qttModifValue !== quantityModif);
-                // La valeur trouvée devient la nouvelle quantité
-                resultFind.quantity = qttModifValue;
-                KanapStorage[k].quantity = resultFind.quantity;
-                // On converti une valeur JS en chaîne JSON
-                localStorage.setItem("cart", JSON.stringify(KanapStorage));
-                // On recharge rapidement la page
-                location.reload();
-            })
-        }
+    let qttModif = document.querySelectorAll('.itemQuantity');
+    // On incrémente la quantité modifiée
+    for (let k = 0; k < qttModif.length; k++) {
+        // On écoute les quantités modifiées
+        qttModif[k].addEventListener('change', (event) => {
+            // On annule l'évènement exécuté par le navigateur
+            event.preventDefault();
+            //Selection de l'element à modifier en fonction de son id ET sa couleur
+            let quantityModif = KanapStorage[k].quantity;
+            let qttModifValue = qttModif[k].valueAsNumber;
+            // On demande la première valeur trouvée dans le tableau
+            const resultFind = KanapStorage.find(
+                (el) => el.qttModifValue !== quantityModif
+            );
+            // La valeur trouvée devient la nouvelle quantité
+            resultFind.quantity = qttModifValue;
+            KanapStorage[k].quantity = resultFind.quantity;
+            // On converti une valeur JS en chaîne JSON
+            localStorage.setItem('cart', JSON.stringify(KanapStorage));
+            // On recharge rapidement la page
+            location.reload();
+        });
     }
+}
 // Appel de la fonction
 modifyQtt();
-
-
 // REGEX
-let emailRegExp = new RegExp('^[A-Za-z0-9.-_]+[@]{1}[A-Za-z0-9.-_]+[.]{1}[a-z]{2,}$');
+let emailRegExp = new RegExp(
+    '^[A-Za-z0-9.-_]+[@]{1}[A-Za-z0-9.-_]+[.]{1}[a-z]{2,}$'
+);
 let caractRegExp = new RegExp("^[A-Za-zàâäéèêëïîôöùûüç'-]+$");
 let cityRegExp = new RegExp("^[A-Za-zàâäéèêëïîôöùûüç '-]+$");
-let addressRegExp = new RegExp('^[0-9]{1,3}(?:(?:[,. ]){1}[-A-Za-zàâäéèêëïîôöùûüç]+)+');
+let addressRegExp = new RegExp(
+    '^[0-9]{1,3}(?:(?:[,. ]){1}[-A-Za-zàâäéèêëïîôöùûüç]+)+'
+);
 
 // Validation du prénom
 function validFirstName(inputFirstName) {
@@ -190,7 +197,7 @@ function validFirstName(inputFirstName) {
     if (caractRegExp.test(inputFirstName.value)) {
         firstNameErrorMsg.innerHTML = '';
         return true;
-    // Si non, on affiche le message d'erreur suivant
+        // Si non, on affiche le message d'erreur suivant
     } else {
         firstNameErrorMsg.innerHTML = 'Saisissez un prénom valide';
         return false;
@@ -305,7 +312,7 @@ function submitForm(event) {
                 'Content-Type': 'application/json',
             },
         };
-        
+
         // On connecte à l'API
         fetch('http://localhost:3000/api/products/order', options)
             .then((response) => response.json())
