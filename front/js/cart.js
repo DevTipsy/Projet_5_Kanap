@@ -1,184 +1,208 @@
 const url = 'http://localhost:3000/api/products/';
 
-// On récupère l'élément cart situé dans le localstorage
-let KanapStorage = JSON.parse(localStorage.getItem('cart'));
+// Initialisation de l'URL Parameters
+const queryString = window.location.search;
 
-// On sélectionne le titre et la classe "cart"
-if (!KanapStorage) {
-    const titleCart = document.querySelector('h1');
-    const sectionCart = document.querySelector('.cart');
-    // On insère un message si le panier est vide
-    titleCart.innerHTML = 'Votre panier est vide !';
-    sectionCart.style.display = 'none';
-    // Si le localstorage n'est pas vide on insère les caractéristiques des produits
+const urlParams = new URLSearchParams(queryString);
+
+const urlProduct = urlParams.get('id');
+
+//Vérification du localstorage
+let kanapStorage;
+if (localStorage.getItem('kanapStorage') != null) {
+    kanapStorage = JSON.parse(localStorage.getItem('kanapStorage'));
 } else {
-    for (let i = 0; i < KanapStorage.length; i++) {
-        // Création de la balise "article" et insertion dans la section
-        let productArticle = document.createElement('article');
-        document.querySelector('#cart__items').appendChild(productArticle);
-        productArticle.className = 'cart__item';
-        productArticle.setAttribute('data-id', KanapStorage[i].id);
+    kanapStorage = [];
+}
 
-        // Insertion de l'élément "div" pour l'image produit
-        let productDivImg = document.createElement('div');
-        productArticle.appendChild(productDivImg);
-        productDivImg.className = 'cart__item__img';
+getLocalStorage();
 
-        // Insertion de l'image
-        let productImg = document.createElement('img');
-        productDivImg.appendChild(productImg);
-        productImg.src = KanapStorage[i].imgP;
-        // productImg.alt = productLocalStorage.altImgProduit;
+function getLocalStorage() {
+    for (let i = 0; i < kanapStorage.length; i++) {
+        fetch(url + kanapStorage[i].idKanap)
+            .then((resp) => resp.json())
+            .then(function (data) {
+                const titleCart = document.querySelector('h1');
+                const sectionCart = document.querySelector('.cart');
 
-        // Insertion de l'élément "div" pour la description produit
-        let productItemContent = document.createElement('div');
-        productArticle.appendChild(productItemContent);
-        productItemContent.className = 'cart__item__content';
+                let nameKanap = data.name;
+                let price = data.price;
+                let ImgP = data.imageUrl;
+                let altImg = data.altTxt;
 
-        // Insertion de l'élément "div"
-        let productItemContentTitlePrice = document.createElement('div');
-        productItemContent.appendChild(productItemContentTitlePrice);
-        productItemContentTitlePrice.className =
-            'cart__item__content__titlePrice';
+                // Création de la balise "article" et insertion dans la section
+                let productArticle = document.createElement('article');
+                document
+                    .querySelector('#cart__items')
+                    .appendChild(productArticle);
+                productArticle.className = 'cart__item';
+                productArticle.setAttribute('data-id', kanapStorage[i].idKanap);
 
-        // Insertion du titre h2
-        let productTitle = document.createElement('h2');
-        productItemContentTitlePrice.appendChild(productTitle);
-        productTitle.innerHTML = KanapStorage[i].nameKanap;
+                // Insertion de l'élément "div" pour l'image produit
+                let productDivImg = document.createElement('div');
 
-        // Insertion de la couleur
-        let productColor = document.createElement('p');
-        productTitle.appendChild(productColor);
-        productColor.innerHTML = KanapStorage[i].colorsP;
-        productColor.style.fontSize = '20px';
+                productDivImg.className = 'cart__item__img';
+                productArticle.appendChild(productDivImg);
 
-        // Insertion du prix
-        let productPrice = document.createElement('p');
-        productItemContentTitlePrice.appendChild(productPrice);
-        productPrice.innerHTML = KanapStorage[i].price + '  ' + ' €';
+                // Insertion de l'image
+                let productImg = document.createElement('img');
+                productImg.src = ImgP;
+                productImg.alt = altImg;
+                productDivImg.appendChild(productImg);
 
-        // Insertion de l'élément "div"
-        let productItemContentSettings = document.createElement('div');
-        productItemContent.appendChild(productItemContentSettings);
-        productItemContentSettings.className = 'cart__item__content__settings';
+                // Insertion de l'élément "div" pour la description produit
+                let productItemContent = document.createElement('div');
+                productItemContent.className = 'cart__item__content';
+                productArticle.appendChild(productItemContent);
 
-        // Insertion de l'élément "div"
-        let productItemContentSettingsQuantity = document.createElement('div');
-        productItemContentSettings.appendChild(
-            productItemContentSettingsQuantity
-        );
-        productItemContentSettingsQuantity.className =
-            'cart__item__content__settings__quantity';
+                //Insertion de l'élément "div"
+                let productItemContentTitlePrice =
+                    document.createElement('div');
+                productItemContentTitlePrice.className =
+                    'cart__item__content__titlePrice';
+                productItemContent.appendChild(productItemContentTitlePrice);
 
-        // Insertion de "Qté : "
-        let productQty = document.createElement('p');
-        productItemContentSettingsQuantity.appendChild(productQty);
-        productQty.innerHTML = 'Qté : ';
+                // Insertion du titre h2
+                let productTitle = document.createElement('h2');
+                productItemContentTitlePrice.appendChild(productTitle);
+                productTitle.innerHTML = nameKanap;
 
-        // Insertion de la quantité
-        let productQuantity = document.createElement('input');
-        productItemContentSettingsQuantity.appendChild(productQuantity);
-        productQuantity.value = KanapStorage[i].qtyKanap;
-        productQuantity.className = 'itemQuantity';
-        productQuantity.setAttribute('type', 'number');
-        productQuantity.setAttribute('min', '1');
-        productQuantity.setAttribute('max', '100');
-        productQuantity.setAttribute('name', 'itemQuantity');
+                // Insertion de la couleur
+                let productColor = document.createElement('p');
+                productColor.innerHTML = kanapStorage[i].colorChoiceKanap;
+                productColor.style.fontSize = '20px';
+                productTitle.appendChild(productColor);
 
-        // Insertion de l'élément "div"
-        let productItemContentSettingsDelete = document.createElement('div');
-        productItemContentSettings.appendChild(
-            productItemContentSettingsDelete
-        );
-        productItemContentSettingsDelete.className =
-            'cart__item__content__settings__delete';
+                // Insertion du prix
+                let productPrice = document.createElement('p');
+                productPrice.innerHTML = price + '  ' + ' €';
+                productItemContentTitlePrice.appendChild(productPrice);
 
-        // Insertion du bouton "p" supprimer
-        let productSupprimer = document.createElement('p');
-        productItemContentSettingsDelete.appendChild(productSupprimer);
-        productSupprimer.className = 'deleteItem';
-        productSupprimer.innerHTML = 'Supprimer';
-        productSupprimer.addEventListener('click', (e) => {
-            e.preventDefault;
+                // Insertion de l'élément "div"
+                let productItemContentSettings = document.createElement('div');
+                productItemContent.appendChild(productItemContentSettings);
+                productItemContentSettings.className =
+                    'cart__item__content__settings';
 
-            // On enregistre l'id et la couleur séléctionnés par le bouton "supprimer"
-            let deleteId = KanapStorage[i].id;
-            let deleteColor = KanapStorage[i].colorsP;
+                // Insertion de l'élément "div"
+                let productItemContentSettingsQuantity =
+                    document.createElement('div');
+                productItemContentSettings.appendChild(
+                    productItemContentSettingsQuantity
+                );
+                productItemContentSettingsQuantity.className =
+                    'cart__item__content__settings__quantity';
 
-            // On filtre l'élément cliqué par le bouton supprimer
-            KanapStorage = KanapStorage.filter(
-                (elt) => elt.id !== deleteId || elt.colorsP !== deleteColor
-            );
+                // Insertion de "Qté : "
+                let productQty = document.createElement('p');
+                productItemContentSettingsQuantity.appendChild(productQty);
+                productQty.innerHTML = 'Qté : ';
 
-            // On envoi les nouvelles données dans le localStorage
-            localStorage.setItem('cart', JSON.stringify(KanapStorage));
+                // Insertion de la quantité
+                let productQuantity = document.createElement('input');
+                productItemContentSettingsQuantity.appendChild(productQuantity);
+                productQuantity.value = kanapStorage[i].quantityKanap;
+                productQuantity.className = 'itemQuantity';
+                productQuantity.setAttribute('type', 'number');
+                productQuantity.setAttribute('min', '1');
+                productQuantity.setAttribute('max', '100');
+                productQuantity.setAttribute('name', 'itemQuantity');
+                productQuantity.addEventListener('change', modifyQuantity);
+                function modifyQuantity(e) {
+                    console.log(e);
+                    let valueNewQuantity = e.path[0].value; // valeur entrée à partir du clavier
+                    if (
+                        valueNewQuantity != kanapStorage[i].quantityKanap &&
+                        valueNewQuantity <= 100 &&
+                        valueNewQuantity > 0
+                    ) {
+                        kanapStorage[i].quantityKanap = valueNewQuantity;
+                        localStorage.setItem(
+                            'kanapStorage',
+                            JSON.stringify(kanapStorage)
+                        );
+                        totalQuantity();
+                        totalPrice();
+                    } else {
+                        alert(
+                            `Vous ne pouvez commander qu'un nombre d'article compris entre 1 et 100`
+                        );
+                        quantityInput.value = 100;
+                    }
+                }
 
-            // Message de confirmation de suppression de l'article
-            alert('Votre article a bien été supprimé.');
+                // Insertion de l'élément "div"
+                let productItemContentSettingsDelete =
+                    document.createElement('div');
+                productItemContentSettings.appendChild(
+                    productItemContentSettingsDelete
+                );
+                productItemContentSettingsDelete.className =
+                    'cart__item__content__settings__delete';
 
-            // Si le panier est vide on vide le local storage
-            if (KanapStorage.length === 0) {
-                localStorage.clear();
-            }
-            //Refresh rapide de la page
-            location.reload();
-        });
+                // Insertion du bouton "p" supprimer
+                let productSupprimer = document.createElement('p');
+                productItemContentSettingsDelete.appendChild(productSupprimer);
+                productSupprimer.className = 'deleteItem';
+                productSupprimer.innerHTML = 'Supprimer';
+                productSupprimer.addEventListener('click', deleteItemFromCart);
+                function deleteItemFromCart() {
+                    let idProduitDelete = kanapStorage[i].idKanap;
+                    let colorProduitDelete = kanapStorage[i].colorChoiceKanap;
+                    kanapStorage = kanapStorage.filter(
+                        (a) =>
+                            a.idKanap !== idProduitDelete &&
+                            a.colorChoiceKanap !== colorProduitDelete
+                    );
+                    localStorage.setItem(
+                        'kanapStorage',
+                        JSON.stringify(kanapStorage)
+                    );
+
+                    if (kanapStorage.length === 0) {
+                        localStorage.clear();
+                    }
+                    window.location.reload();
+                }
+
+                totalQuantity();
+            });
+        console.log(kanapStorage);
     }
 }
 
-// Calcul de la quantité totale
-function total() {
-    let quantity = document.querySelectorAll('.itemQuantity');
-    let totalQuantity = document.getElementById('totalQuantity');
-    let totalQuant = 0;
-    // On incrémente la quantité
-    for (let i = 0; i < quantity.length; i++) {
-        totalQuant += quantity[i].valueAsNumber;
-    }
-    // On affiche la quantité totale
-    totalQuantity.innerText = totalQuant;
-    // On récupère l'élément totalPrice
-    let productTotalPrice = document.getElementById('totalPrice');
-    // Récupération du prix total
-    let totalPrice = 0;
-    // On incrémente le prix et on calcul le prix total
-    for (var i = 0; i < quantity.length; i++) {
-        totalPrice += quantity[i].valueAsNumber * KanapStorage[i].price;
-    }
-    // Insertion du prix total
-    productTotalPrice.innerHTML = totalPrice;
-}
-// Appel de la fonction
-total();
+//Fonction pour avoir le nombre total de produits
+function totalQuantity() {
+    let quantityItem = document.getElementsByClassName('itemQuantity');
+    let number = 0;
 
-// Fonction pour modifier dynamiquement la quantité
-function modifyQtt() {
-    let qttModif = document.querySelectorAll('.itemQuantity');
-    // On incrémente la quantité modifiée
-    for (let k = 0; k < qttModif.length; k++) {
-        // On écoute les quantités modifiées
-        qttModif[k].addEventListener('change', (event) => {
-            // On annule l'évènement exécuté par le navigateur
-            event.preventDefault();
-            //Selection de l'element à modifier en fonction de son id ET sa couleur
-            let quantityModif = KanapStorage[k].quantity;
-            let qttModifValue = qttModif[k].valueAsNumber;
-            // On demande la première valeur trouvée dans le tableau
-            const resultFind = KanapStorage.find(
-                (el) => el.qttModifValue !== quantityModif
-            );
-            // La valeur trouvée devient la nouvelle quantité
-            resultFind.quantity = qttModifValue;
-            KanapStorage[k].quantity = resultFind.quantity;
-            // On converti une valeur JS en chaîne JSON
-            localStorage.setItem('cart', JSON.stringify(KanapStorage));
-            // On recharge rapidement la page
-            location.reload();
-        });
+    for (let i = 0; i < quantityItem.length; i++) {
+        number += parseInt(quantityItem[i].value);
     }
+    let totalNumber = document.getElementById('totalQuantity');
+    totalNumber.innerHTML = number;
 }
-// Appel de la fonction
-modifyQtt();
+totalQuantity();
+totalPrice();
+
+// Fonction pour avoir le prix total
+async function totalPrice() {
+    let quantityItem = document.getElementsByClassName('itemQuantity');
+    let total = 0;
+
+    for (let e = 0; e < kanapStorage.length; e++) {
+        let itemPrice = await fetch(url + kanapStorage[e].idKanap) //récupérer le prix du canapé via l'url
+            .then((resp) => resp.json())
+            .then(function (data) {
+                return data.price;
+            });
+        total += itemPrice * parseInt(quantityItem[e].value);
+    }
+    totalPriceProduct = document.getElementById('totalPrice');
+    totalPriceProduct.innerHTML = total;
+}
+totalPrice();
+
 // REGEX
 let emailRegExp = new RegExp(
     '^[A-Za-z0-9.-_]+[@]{1}[A-Za-z0-9.-_]+[.]{1}[a-z]{2,}$'
@@ -275,7 +299,7 @@ function submitForm(event) {
     let resMail = validEmail(inputMail);
 
     // Si le panier est vide, on affiche un message, si tous les champs sont remplis, la requète serveur peut être effectuée
-    if (KanapStorage == '') {
+    if (kanapStorage == '') {
         alert('Votre panier est vide :(');
     } else if (
         resFirstName &&
@@ -283,12 +307,12 @@ function submitForm(event) {
         resAdress &&
         resCity &&
         resMail &&
-        KanapStorage != ''
+        kanapStorage != ''
     ) {
         // Construction d'un tableau depuis le localstorage
         let idPanier = [];
-        for (let i = 0; i < KanapStorage.length; i++) {
-            idPanier.push(KanapStorage[i].id);
+        for (let i = 0; i < kanapStorage.length; i++) {
+            idPanier.push(kanapStorage[i].id);
         }
 
         // Création de l'objet

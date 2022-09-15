@@ -1,5 +1,14 @@
+const url = 'http://localhost:3000/api/products/';
+
+// Initialisation de l'URL Parameters
+const queryString = window.location.search;
+
+const urlParams = new URLSearchParams(queryString);
+
+const id = urlParams.get('_id');
+
 //On récupére l'id via les paramètres de l'url
-const id = new URL(window.location.href).searchParams.get('_id');
+//const id = new URL(window.location.href).searchParams.get('_id');
 
 //Récupération des sélecteurs pour les futurs modifications
 let title = document.getElementById('title');
@@ -22,7 +31,7 @@ async function InfoProduct() {
             let title = document.getElementById('title');
             let price = document.getElementById('price');
             let description = document.getElementById('description');
-            let colorsP = document.getElementById('colors');
+            let color = document.getElementById('colors');
 
             //On définit la source et alt de l'img
             img.setAttribute('src', item.imageUrl);
@@ -35,108 +44,84 @@ async function InfoProduct() {
             //On créé la boucle pour le choix de la couleur
             for (let i = 0; i < item.colors.length; i++) {
                 //Création de l'élément "option"
-                let color = document.createElement('option');
+                let colors = document.createElement('option');
                 //On attribue un paramètre "value"
-                color.setAttribute('value', item.colors[i]);
+                colors.setAttribute('value', item.colors[i]);
                 //On insère la couleur dans le html
-                color.innerHTML = item.colors[i];
-                colorsP.appendChild(color);
+                colors.innerHTML = item.colors[i];
+                color.appendChild(colors);
             }
         });
 }
-//Eventlistener du bouton
-const button = document.getElementById('addToCart');
-button.addEventListener('click', ajoutPanier);
 
-//Ajouter des produits au panier grâce au localstorage
-/*****************************************************/
+//Ajout d'un canapé au panier avec le bouton addButton
+let addToCartButton = document.getElementById('addToCart');
+addToCartButton.addEventListener('click', ajoutPanier);
 
 function ajoutPanier() {
-    const colorChoice = document.querySelector('#colors');
-    const quantityChoice = document.querySelector('#quantity');
+    //Etablissement du local storage lors du click 'Ajout au panier'
 
-    if (
-        quantityChoice.value > 0 &&
-        quantityChoice.value <= 100 &&
-        quantityChoice.value != 0 &&
-        colorChoice.value != 0
-    ) {
-        if (localStorage.getItem('cart')) {
-            let productCart = JSON.parse(localStorage.getItem('cart'));
-            console.log(productCart);
+    let kanapStorage;
 
-            let idP = id;
-            let colorsP = document.querySelector('#colors').value;
-            let qtyKanap = document.querySelector('#quantity').value;
+    if (localStorage.getItem('kanapStorage') != null) {
+        kanapStorage = JSON.parse(localStorage.getItem('kanapStorage'));
+    } else {
+        kanapStorage = [];
+    }
 
-            const resultFind = productCart.find(
-                (el) => el.idP === id && el.colorsP === colorsP
-            );
-            //Si le produit commandé est déjà dans le panier
+    fetch(url + id)
+        .then((resp) => resp.json())
+        .then(function (data) {
+            //constante du choix de couleurs
+            const colorChoice = document.querySelector('#colors');
+            //constante du choix de la quantité
+            const quantityChoice = document.querySelector('#quantity');
 
-            if (resultFind) {
-                let newQuantite =
-                    parseInt(qtyKanap) + parseInt(resultFind.qtyKanap);
+            console.log(colorChoice.value === '');
+            //Mise en place de la condition où les valeurs color + quantity doivent être établies
+            if (
+                quantityChoice.value > 0 &&
+                quantityChoice.value <= 100 &&
+                colorChoice.value != ''
+            ) {
+                let quantityChoiceKanap = parseInt(quantityChoice.value);
+                console.log(quantityChoiceKanap);
 
-                resultFind.qtyKanap = newQuantite;
-                localStorage.setItem('cart', JSON.stringify(productCart));
-
-                //Si le produit commandé n'est pas dans le panier
-            } else {
-                let productCart = JSON.parse(localStorage.getItem('cart'));
-
-                let idP = id;
-                let nameKanap = document.querySelector('#title').textContent;
-                let colorsP = document.querySelector('#colors').value;
-                let qtyKanap = document.querySelector('#quantity').value;
-                let imgP = img.src;
-                let altImg = img.alt;
-                let price = document.querySelector('#price').textContent;
-
-                let productCartObj = {
-                    idP: id,
-                    nameKanap: nameKanap,
-                    colorsP: colorsP,
-                    qtyKanap: qtyKanap,
-                    imgP: imgP,
-                    altImg: altImg,
-                    price: price,
+                let kanap = {
+                    idKanap: id,
+                    colorChoiceKanap: colorChoice.value,
+                    quantityKanap: quantityChoiceKanap,
                 };
 
-                productCart.push(productCartObj);
+                let presenceProduit = false;
+                let indexProduit = null;
 
-                let objCart = JSON.stringify(productCart);
-                localStorage.setItem('cart', objCart);
+                for (let i = 0; i < kanapStorage.length; i++) {
+                    if (
+                        kanapStorage[i].idKanap === kanap.idKanap &&
+                        kanapStorage[i].colorChoiceKanap ===
+                            kanap.colorChoiceKanap
+                    ) {
+                        presenceProduit = true;
+                        indexProduit = i;
+                    }
+                }
+                if (presenceProduit) {
+                    kanapStorage[indexProduit].quantityKanap +=
+                        kanap.quantityKanap;
+                } else {
+                    console.log(kanapStorage);
+                    kanapStorage.push(kanap);
+                }
 
-                alert('Ajouté au panier !');
+                localStorage.setItem(
+                    'kanapStorage',
+                    JSON.stringify(kanapStorage)
+                ); // enregistrement du canapé dans le local storage
+
+                // AU "CLICK", ENVOI SUR LA PAGE PANIER
+                window.location.href = './cart.html';
             }
-        } else {
-            let productCart = [];
-
-            let idP = id;
-            let nameKanap = document.querySelector('#title').textContent;
-            let colorsP = document.querySelector('#colors').value;
-            let qtyKanap = document.querySelector('#quantity').value;
-            let imgP = img.src;
-            let altImg = img.alt;
-            let price = document.querySelector('#price').textContent;
-
-            let productCartObj = {
-                idP: id,
-                nameKanap: nameKanap,
-                colorsP: colorsP,
-                qtyKanap: qtyKanap,
-                imgP: imgP,
-                altImg: altImg,
-                price: price,
-            };
-
-            productCart.push(productCartObj);
-
-            let objCart = JSON.stringify(productCart);
-            localStorage.setItem('cart', objCart);
-
-            alert('Ajouté au panier !');
-        }
-    }
+        });
+    console.log(kanapStorage);
 }
