@@ -1,14 +1,11 @@
 const url = 'http://localhost:3000/api/products/';
 
-// Initialisation de l'URL Parameters
+// Initialisation de l'URL
 const queryString = window.location.search;
 
 const urlParams = new URLSearchParams(queryString);
 
 const id = urlParams.get('_id');
-
-//On récupére l'id via les paramètres de l'url
-//const id = new URL(window.location.href).searchParams.get('_id');
 
 //Récupération des sélecteurs pour les futurs modifications
 let title = document.getElementById('title');
@@ -68,7 +65,7 @@ function ajoutPanier() {
     } else {
         kanapStorage = [];
     }
-
+    // On récupère l'url avec l'ID et on les convertis
     fetch(url + id)
         .then((resp) => resp.json())
         .then(function (data) {
@@ -79,23 +76,27 @@ function ajoutPanier() {
 
             console.log(colorChoice.value === '');
             //Mise en place de la condition où les valeurs color + quantity doivent être établies
+            // Si la valeur quantity est renseignée et entre 1 et 100 :
             if (
                 quantityChoice.value > 0 &&
                 quantityChoice.value <= 100 &&
                 colorChoice.value != ''
             ) {
+                // On affiche la quantité
                 let quantityChoiceKanap = parseInt(quantityChoice.value);
                 console.log(quantityChoiceKanap);
-
+                
+                // On déclare le kanap via l'ID, la couleur et la quantité choisis
                 let kanap = {
                     idKanap: id,
                     colorChoiceKanap: colorChoice.value,
                     quantityKanap: quantityChoiceKanap,
                 };
-
+                // On déclare 2 variables pour vérifier plus tard que le produit est présent ou non dans le panier
                 let presenceProduit = false;
                 let indexProduit = null;
 
+                // On créé une boucle pour récupérer le nombre de produits (en utilisant la quantité la couleur et l'index)
                 for (let i = 0; i < kanapStorage.length; i++) {
                     if (
                         kanapStorage[i].idKanap === kanap.idKanap &&
@@ -106,20 +107,23 @@ function ajoutPanier() {
                         indexProduit = i;
                     }
                 }
+                // Si le produit est présent on incrémente de la quantité choisie
                 if (presenceProduit) {
                     kanapStorage[indexProduit].quantityKanap +=
                         kanap.quantityKanap;
+                // Sinon on affiche le produit et on l'ajoute à la fin du tableau 
                 } else {
                     console.log(kanapStorage);
                     kanapStorage.push(kanap);
                 }
-
+                // On met à jour le localStorage
+                // On enregistre le canapé dans le local storage
                 localStorage.setItem(
                     'kanapStorage',
                     JSON.stringify(kanapStorage)
-                ); // enregistrement du canapé dans le local storage
+                );
 
-                // AU "CLICK", ENVOI SUR LA PAGE PANIER
+                // Au clic on redirige l'utilisateur vers la page panier
                 window.location.href = './cart.html';
             }
         });

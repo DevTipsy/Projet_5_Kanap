@@ -1,6 +1,7 @@
+// Connexion à l'API
 const url = 'http://localhost:3000/api/products/';
 
-// Initialisation de l'URL Parameters
+// Initialisation de l'URL
 const queryString = window.location.search;
 
 const urlParams = new URLSearchParams(queryString);
@@ -15,16 +16,22 @@ if (localStorage.getItem('kanapStorage') != null) {
     kanapStorage = [];
 }
 
+// Appel de la fonction
 getLocalStorage();
 
+// Création de la fonction getLocalStorage
 function getLocalStorage() {
+    // On créé la boucle qui va afficher les kanap dans le panier grâce à leur titre et infos
     for (let i = 0; i < kanapStorage.length; i++) {
+        // On récupère les articles et on affiche leurs infos grâce a l'ID
         fetch(url + kanapStorage[i].idKanap)
             .then((resp) => resp.json())
             .then(function (data) {
+                // On déclare 2 constantes titre et section
                 const titleCart = document.querySelector('h1');
                 const sectionCart = document.querySelector('.cart');
 
+                // On déclare les caractéristiques produits
                 let nameKanap = data.name;
                 let price = data.price;
                 let ImgP = data.imageUrl;
@@ -98,7 +105,7 @@ function getLocalStorage() {
                 productItemContentSettingsQuantity.appendChild(productQty);
                 productQty.innerHTML = 'Qté : ';
 
-                // Insertion de la quantité
+                // Insertion de la quantité via l'input et avec les restrictions d'attributs
                 let productQuantity = document.createElement('input');
                 productItemContentSettingsQuantity.appendChild(productQuantity);
                 productQuantity.value = kanapStorage[i].quantityKanap;
@@ -107,22 +114,30 @@ function getLocalStorage() {
                 productQuantity.setAttribute('min', '1');
                 productQuantity.setAttribute('max', '100');
                 productQuantity.setAttribute('name', 'itemQuantity');
+                // On écoute le bouton input pour changer la quantité au clic
                 productQuantity.addEventListener('change', modifyQuantity);
                 function modifyQuantity(e) {
+                    // On affiche la quantité modifiée dynamiquement
                     console.log(e);
-                    let valueNewQuantity = e.path[0].value; // valeur entrée à partir du clavier
+
+                    // On déclare la valeur entrée à partir du clavier
+                    let valueNewQuantity = e.path[0].value;
+                    // Si la quantité d'origine et la nouvelle sont entre 1 et 100
                     if (
                         valueNewQuantity != kanapStorage[i].quantityKanap &&
                         valueNewQuantity <= 100 &&
                         valueNewQuantity > 0
                     ) {
+                        // On change la quantité pour la nouvelle dans le localStorage
                         kanapStorage[i].quantityKanap = valueNewQuantity;
                         localStorage.setItem(
                             'kanapStorage',
                             JSON.stringify(kanapStorage)
                         );
+                        // On appelle les fonctions pour la quantité et le prix total
                         totalQuantity();
                         totalPrice();
+                        // Sinon on affiche un message d'erreur
                     } else {
                         alert(
                             `Vous ne pouvez commander qu'un nombre d'article compris entre 1 et 100`
@@ -145,26 +160,30 @@ function getLocalStorage() {
                 productItemContentSettingsDelete.appendChild(productSupprimer);
                 productSupprimer.className = 'deleteItem';
                 productSupprimer.innerHTML = 'Supprimer';
+                // On écoute le bouton "supprimer"
                 productSupprimer.addEventListener('click', deleteItemFromCart);
+                // Création de la fonction de suppression de l'article dans le localStorage et le panier
                 function deleteItemFromCart() {
                     let idProduitDelete = kanapStorage[i].idKanap;
                     let colorProduitDelete = kanapStorage[i].colorChoiceKanap;
+                    //On filtre les données liées à l'élément à supprimer
                     kanapStorage = kanapStorage.filter(
                         (a) =>
                             a.idKanap !== idProduitDelete &&
                             a.colorChoiceKanap !== colorProduitDelete
                     );
+                    // On mets à jour le localStorage
                     localStorage.setItem(
                         'kanapStorage',
                         JSON.stringify(kanapStorage)
                     );
-
+                    // Si la quantité du kanap = 0, on vide le localStorage et on refresh rapide
                     if (kanapStorage.length === 0) {
                         localStorage.clear();
                     }
                     window.location.reload();
                 }
-
+                // On appelle la fonction de quantité totale (car on a modifié la quantité par la suppression)
                 totalQuantity();
             });
         console.log(kanapStorage);
@@ -179,9 +198,11 @@ function totalQuantity() {
     for (let i = 0; i < quantityItem.length; i++) {
         number += parseInt(quantityItem[i].value);
     }
+    // On déclare la variable et on l'insère via innerHTML
     let totalNumber = document.getElementById('totalQuantity');
     totalNumber.innerHTML = number;
 }
+// On appelle les fonctions pour les totaux
 totalQuantity();
 totalPrice();
 
@@ -191,22 +212,27 @@ async function totalPrice() {
     let total = 0;
 
     for (let e = 0; e < kanapStorage.length; e++) {
-        let itemPrice = await fetch(url + kanapStorage[e].idKanap) //récupérer le prix du canapé via l'url
+        // On récupére le prix du canapé via l'url
+        let itemPrice = await fetch(url + kanapStorage[e].idKanap)
             .then((resp) => resp.json())
             .then(function (data) {
                 return data.price;
             });
+        // On effectue le calcul
         total += itemPrice * parseInt(quantityItem[e].value);
     }
+    // On insère le prix total
     totalPriceProduct = document.getElementById('totalPrice');
     totalPriceProduct.innerHTML = total;
 }
+// On appelle la fonction
 totalPrice();
 
 // REGEX
 let emailRegExp = new RegExp(
     '^[A-Za-z0-9.-_]+[@]{1}[A-Za-z0-9.-_]+[.]{1}[a-z]{2,}$'
 );
+// On définit les règles de regex pour les champs
 let caractRegExp = new RegExp("^[A-Za-zàâäéèêëïîôöùûüç'-]+$");
 let cityRegExp = new RegExp("^[A-Za-zàâäéèêëïîôöùûüç '-]+$");
 let addressRegExp = new RegExp(
@@ -348,6 +374,7 @@ function submitForm(event) {
                 alert('Erreur : ' + err.message);
             });
     } else {
+        // On affiche un message d'erreur
         alert('Veuillez remplir les champs manquants svp');
     }
 }
