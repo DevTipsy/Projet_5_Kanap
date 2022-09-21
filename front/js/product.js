@@ -65,10 +65,6 @@ function ajoutPanier() {
     } else {
         kanapStorage = [];
     }
-    // On récupère l'url avec l'ID et on les convertis
-    fetch(url + id)
-        .then((resp) => resp.json())
-        .then(function (data) {
             //constante du choix de couleurs
             const colorChoice = document.querySelector('#colors');
             //constante du choix de la quantité
@@ -126,6 +122,5 @@ function ajoutPanier() {
                 // Au clic on redirige l'utilisateur vers la page panier
                 window.location.href = './cart.html';
             }
-        });
+        };
     console.log(kanapStorage);
-}

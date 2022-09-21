@@ -352,7 +352,6 @@ function submitForm(event) {
             },
             products: idPanier,
         };
-
         // Requête post
         const options = {
             method: 'POST',
@@ -368,7 +367,7 @@ function submitForm(event) {
             .then((response) => response.json())
             .then((data) => {
                 localStorage.clear();
-                document.location.href = `confirmation.html?id=${data.orderId}`;
+                document.location.href = 'confirmation.html?id='+ data.orderId;
             })
             .catch((err) => {
                 alert('Erreur : ' + err.message);
