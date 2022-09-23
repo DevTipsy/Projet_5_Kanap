@@ -228,86 +228,94 @@ async function totalPrice() {
 // On appelle la fonction
 totalPrice();
 
-// REGEX
-let emailRegExp = new RegExp(
-    '^[A-Za-z0-9.-_]+[@]{1}[A-Za-z0-9.-_]+[.]{1}[a-z]{2,}$'
-);
-// On définit les règles de regex pour les champs
-let caractRegExp = new RegExp("^[A-Za-zàâäéèêëïîôöùûüç'-]+$");
-let cityRegExp = new RegExp("^[A-Za-zàâäéèêëïîôöùûüç '-]+$");
-let addressRegExp = new RegExp(
-    '^[0-9]{1,3}(?:(?:[,. ]){1}[-A-Za-zàâäéèêëïîôöùûüç]+)+'
-);
 
-// Validation du prénom
-function validFirstName(inputFirstName) {
-    let firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
-    // On vérifie si il y a une correspondance entre le texte et l'expression
-    // Si oui, le champ est considéré comme valide
-    if (caractRegExp.test(inputFirstName.value)) {
-        firstNameErrorMsg.innerHTML = '';
-        return true;
-        // Si non, on affiche le message d'erreur suivant
-    } else {
-        firstNameErrorMsg.innerHTML = 'Saisissez un prénom valide';
-        return false;
-    }
-}
-
-// Validation du nom
-function validLastName(inputLastName) {
-    let lastNameErrorMsg = document.querySelector('#lastNameErrorMsg');
-    if (caractRegExp.test(inputLastName.value)) {
-        lastNameErrorMsg.innerHTML = '';
-        return true;
-    } else {
-        lastNameErrorMsg.innerHTML = 'Saisissez un nom valide';
-        return false;
-    }
-}
-
-// Validation de l'adresse
-function validAddress(inputAddress) {
-    let addressErrorMsg = document.querySelector('#addressErrorMsg');
-    if (addressRegExp.test(inputAddress.value)) {
-        addressErrorMsg.innerHTML = '';
-        return true;
-    } else {
-        addressErrorMsg.innerHTML = 'Saisissez une adresse valide';
-        return false;
-    }
-}
-
-// Validation de la ville
-function validCity(inputCity) {
-    let cityErrorMsg = document.querySelector('#cityErrorMsg');
-    if (cityRegExp.test(inputCity.value)) {
-        cityErrorMsg.innerHTML = '';
-        return true;
-    } else {
-        cityErrorMsg.innerHTML = 'Saisissez un nom de ville valide';
-        return false;
-    }
-}
-
-// Validation de l'email
-function validEmail(inputEmail) {
-    let emailErrorMsg = document.querySelector('#emailErrorMsg');
-    if (emailRegExp.test(inputEmail.value)) {
-        emailErrorMsg.innerHTML = '';
-        return true;
-    } else {
-        emailErrorMsg.innerHTML = 'Saisissez un email valide';
-        return false;
-    }
-}
 
 // Déclaration du bouton "commander" et envoi du formulaire
 const btn_commander = document.getElementById('order');
 btn_commander.addEventListener('click', (event) => submitForm(event));
 
+let form = document.getElementsByClassName('cart__order__form');
+
+function elementsForm (){
+    // REGEX
+    let emailRegExp = new RegExp(
+        '^[A-Za-z0-9.-_]+[@]{1}[A-Za-z0-9.-_]+[.]{1}[a-z]{2,}$'
+    );
+    // On définit les règles de regex pour les champs
+    let caractRegExp = new RegExp("^[A-Za-zàâäéèêëïîôöùûüç'-]+$");
+    let cityRegExp = new RegExp("^[A-Za-zàâäéèêëïîôöùûüç '-]+$");
+    let addressRegExp = new RegExp(
+        '^[0-9]{1,3}(?:(?:[,. ]){1}[-A-Za-zàâäéèêëïîôöùûüç]+)+'
+    );
+
+    // Validation du prénom
+    function validFirstName(inputFirstName) {
+        let firstNameErrorMsg = document.querySelector('#firstNameErrorMsg');
+        // On vérifie si il y a une correspondance entre le texte et l'expression
+        // Si oui, le champ est considéré comme valide
+        if (caractRegExp.test(inputFirstName.value)) {
+            firstNameErrorMsg.innerHTML = '';
+            return true;
+            // Si non, on affiche le message d'erreur suivant
+        } else {
+            firstNameErrorMsg.innerHTML = 'Saisissez un prénom valide';
+            return false;
+        }
+    }
+
+    // Validation du nom
+    function validLastName(inputLastName) {
+        let lastNameErrorMsg = document.querySelector('#lastNameErrorMsg');
+        if (caractRegExp.test(inputLastName.value)) {
+            lastNameErrorMsg.innerHTML = '';
+            return true;
+        } else {
+            lastNameErrorMsg.innerHTML = 'Saisissez un nom valide';
+            return false;
+        }
+    }
+
+    // Validation de l'adresse
+    function validAddress(inputAddress) {
+        let addressErrorMsg = document.querySelector('#addressErrorMsg');
+        if (addressRegExp.test(inputAddress.value)) {
+            addressErrorMsg.innerHTML = '';
+            return true;
+        } else {
+            addressErrorMsg.innerHTML = 'Saisissez une adresse valide';
+            return false;
+        }
+    }
+
+    // Validation de la ville
+    function validCity(inputCity) {
+        let cityErrorMsg = document.querySelector('#cityErrorMsg');
+        if (cityRegExp.test(inputCity.value)) {
+            cityErrorMsg.innerHTML = '';
+            return true;
+        } else {
+            cityErrorMsg.innerHTML = 'Saisissez un nom de ville valide';
+            return false;
+        }
+    }
+
+    // Validation de l'email
+    function validEmail(inputEmail) {
+        let emailErrorMsg = document.querySelector('#emailErrorMsg');
+        if (emailRegExp.test(inputEmail.value)) {
+            emailErrorMsg.innerHTML = '';
+            return true;
+        } else {
+            emailErrorMsg.innerHTML = 'Saisissez un email valide';
+            return false;
+        }
+    }
+}
+elementsForm();
+
+
 //Envoi des informations client au localstorage après validation
-function submitForm(event) {
+async function submitForm(event) {
     event.preventDefault();
 
     // On récupère les coordonnées du formulaire client
@@ -325,9 +333,10 @@ function submitForm(event) {
     let resMail = validEmail(inputMail);
 
     // Si le panier est vide, on affiche un message, si tous les champs sont remplis, la requète serveur peut être effectuée
-    if (kanapStorage == '') {
+/*    if (kanapStorage == '') {
         alert('Votre panier est vide :(');
-    } else if (
+    
+} else if (
         resFirstName &&
         resLastName &&
         resAdress &&
@@ -335,14 +344,16 @@ function submitForm(event) {
         resMail &&
         kanapStorage != ''
     ) {
-        // Construction d'un tableau depuis le localstorage
+*/      // Construction d'un tableau depuis le localstorage
         let idPanier = [];
         for (let i = 0; i < kanapStorage.length; i++) {
             idPanier.push(kanapStorage[i].id);
         }
 
+        let order = document.getElementById('order');
+
         // Création de l'objet
-        const order = {
+        const infoRecap = {
             contact: {
                 firstName: inputName.value,
                 lastName: inputLastName.value,
@@ -353,17 +364,26 @@ function submitForm(event) {
             products: idPanier,
         };
         // Requête post
-        const options = {
+        const options = await fetch(url + 'order',{
             method: 'POST',
-            body: JSON.stringify(order),
+            body: JSON.stringify(infoRecap),
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-            },
-        };
+            }
+        })
+        let data = response.json();
+        let orderId = data.orderId();
+    }
+    order.addEventListener('click', function(event){
+        event.preventDefault();
+        submitForm();
+        document.location.href = 'confirmation.html?orderId='+ orderId;
+    });
 
+/*
         // On connecte à l'API
-        fetch('http://localhost:3000/api/products/order', options)
+        fetch('http://localhost:3000/api/products/order', infoRecap)
             .then((response) => response.json())
             .then((data) => {
                 localStorage.clear();
@@ -376,4 +396,4 @@ function submitForm(event) {
         // On affiche un message d'erreur
         alert('Veuillez remplir les champs manquants svp');
     }
-}
+}*/
