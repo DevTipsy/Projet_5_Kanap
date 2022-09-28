@@ -16,6 +16,8 @@ let imgProduit = document.querySelector('.item__img');
 let img = document.createElement('img');
 imgProduit.appendChild(img);
 
+
+// On affiche les infos du produit sélectionné sur la page d'accueil
 //On appelle la fonction (asynchrone) des détails d'un canapé
 InfoProduct();
 
@@ -29,10 +31,10 @@ async function InfoProduct() {
             let price = document.getElementById('price');
             let description = document.getElementById('description');
             let color = document.getElementById('colors');
-
             //On définit la source et alt de l'img
             img.setAttribute('src', item.imageUrl);
             img.setAttribute('alt', item.altTxt);
+
             //On insère les infos produit
             title.innerHTML = item.name;
             price.innerHTML = item.price;
@@ -55,14 +57,16 @@ async function InfoProduct() {
 let addToCartButton = document.getElementById('addToCart');
 addToCartButton.addEventListener('click', ajoutPanier);
 
+
+// On établit le local storage
 function ajoutPanier() {
     //Etablissement du local storage lors du click 'Ajout au panier'
-
     let kanapStorage;
 
     if (localStorage.getItem('kanapStorage') != null) {
         kanapStorage = JSON.parse(localStorage.getItem('kanapStorage'));
     } else {
+        // On créé un tableau qui va contenir les éléments que l'on va ajouter
         kanapStorage = [];
     }
             //constante du choix de couleurs
@@ -82,7 +86,7 @@ function ajoutPanier() {
                 let quantityChoiceKanap = parseInt(quantityChoice.value);
                 console.log(quantityChoiceKanap);
                 
-                // On déclare le kanap via l'ID, la couleur et la quantité choisis
+                // On déclare l'objet kanap avec un ID, la couleur et la quantité choisis
                 let kanap = {
                     idKanap: id,
                     colorChoiceKanap: colorChoice.value,
@@ -100,10 +104,11 @@ function ajoutPanier() {
                             kanap.colorChoiceKanap
                     ) {
                         presenceProduit = true;
+                        // On récupère l'index
                         indexProduit = i;
                     }
                 }
-                // Si le produit est présent on incrémente de la quantité choisie
+                // Si le produit est présent on récupère la quantité choisie eto n l'incrémente
                 if (presenceProduit) {
                     kanapStorage[indexProduit].quantityKanap +=
                         kanap.quantityKanap;

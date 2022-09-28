@@ -1,5 +1,6 @@
 /*Connexion à l'api*/
 /*********************/
+// On émet une requêtte avec la fonction asynchrone Fetch
 fetch("http://localhost:3000/api/products")
   //On transforme la réponse en objet JS interprétable par le navigateur
   .then((reponse) => reponse.json())
@@ -7,7 +8,7 @@ fetch("http://localhost:3000/api/products")
   .then((data) => {
     //On demande de récupérer les données sous forme de tableau dans la console
     console.table(data);
-    //On demande d'afficher les produits de la boucle for qui suit
+    //On appelle la fonction pour afficher les éléments de l'API
     afficherKanap(data);
   })
   //Si il ya une erreur:
@@ -20,7 +21,7 @@ fetch("http://localhost:3000/api/products")
 
 /*Création des cartes produits*/
 /******************************/
-//On utilise le même nom que la promise pour la fonction en précisant la page concernée
+// On affiche les canapés
 function afficherKanap(data) {
   //On déclare une variable en utilisant l'ID items 
   let produits = document.querySelector("#items");

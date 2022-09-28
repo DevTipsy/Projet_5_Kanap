@@ -21,9 +21,9 @@ getLocalStorage();
 
 // Création de la fonction getLocalStorage
 function getLocalStorage() {
-  // On créé la boucle qui va afficher les kanap dans le panier grâce à leur titre et infos
+  // On créé la boucle qui va parcour le local storage et afficher les kanap
   for (let i = 0; i < kanapStorage.length; i++) {
-    // On récupère les articles et on affiche leurs infos grâce a l'ID
+    // On récupère les articles dans l'API et on affiche leurs infos grâce a l'ID
     fetch(url + kanapStorage[i].idKanap)
       .then((resp) => resp.json())
       .then(function (data) {
@@ -112,8 +112,6 @@ function getLocalStorage() {
         // On écoute le bouton input pour changer la quantité au clic
         productQuantity.addEventListener("change", modifyQuantity);
         function modifyQuantity(e) {
-          // On affiche la quantité modifiée dynamiquement
-          console.log(e);
 
           // On déclare la valeur entrée à partir du clavier
           let valueNewQuantity = e.path[0].value;
@@ -129,7 +127,7 @@ function getLocalStorage() {
             // On appelle les fonctions pour la quantité et le prix total
             totalQuantity();
             totalPrice();
-            // Sinon on affiche un message d'erreur
+            // Sinon on affiche un message d'erreur si la condition n'est pas respectée
           } else {
             alert(
               `Vous ne pouvez commander qu'un nombre d'article compris entre 1 et 100`
@@ -180,13 +178,14 @@ function getLocalStorage() {
 
 //Fonction pour avoir le nombre total de produits
 function totalQuantity() {
+  // On récupère la quantité de tous les articles dans le panier
   let quantityItem = document.getElementsByClassName("itemQuantity");
   let number = 0;
-
+// On parcourt le tableau des quantité précédent
   for (let i = 0; i < quantityItem.length; i++) {
     number += parseInt(quantityItem[i].value);
   }
-  // On déclare la variable et on l'insère via innerHTML
+  // On déclare la variable et on l'insère via innerHTML, puis affichage de la quantité totale via l'ID
   let totalNumber = document.getElementById("totalQuantity");
   totalNumber.innerHTML = number;
 }
@@ -308,6 +307,7 @@ Form();
 // Bouton COMMANDER
 const order = document.getElementById("order");
 
+// On envoi le formulaire
 async function submitOrder() {
   //Mise en place d'un objet pour les infos du formulaire
   const infoContact = {
