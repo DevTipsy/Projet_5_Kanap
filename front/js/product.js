@@ -21,6 +21,9 @@ imgProduit.appendChild(img);
 //On appelle la fonction (asynchrone) des détails d'un canapé
 InfoProduct();
 
+/***************************************/
+/*Fonction affichage des infos produits*/
+/***************************************/
 //On récupère l'article et affiche ses données grâce a l'id
 async function InfoProduct() {
     await fetch('http://localhost:3000/api/products/' + id)
@@ -53,6 +56,9 @@ async function InfoProduct() {
         });
 }
 
+/**************************/
+/*Fonction ajout au panier*/
+/**************************/
 //Ajout d'un canapé au panier avec le bouton addButton
 let addToCartButton = document.getElementById('addToCart');
 addToCartButton.addEventListener('click', ajoutPanier);
@@ -128,4 +134,3 @@ function ajoutPanier() {
                 window.location.href = './cart.html';
             }
         };
-    console.log(kanapStorage);

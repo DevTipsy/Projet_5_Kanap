@@ -1,5 +1,8 @@
 const url = "http://localhost:3000/api/products/order";
 
+/**********************************************/
+/*Fonction message de confirmation de commande*/
+/**********************************************/
 function Confirmation() {
     // Initialisation de l'URL Parameters
     const queryString = window.location.search;
