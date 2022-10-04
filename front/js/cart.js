@@ -25,7 +25,7 @@ getLocalStorage();
 
 // Création de la fonction getLocalStorage
 function getLocalStorage() {
-  // On créé la boucle qui va parcour le local storage et afficher les kanap
+  // On créé la boucle qui va parcourir le local storage et afficher les kanap
   for (let i = 0; i < kanapStorage.length; i++) {
     // On récupère les articles dans l'API et on affiche leurs infos grâce a l'ID
     fetch(url + kanapStorage[i].idKanap)
@@ -184,7 +184,6 @@ function getLocalStorage() {
         // On appelle la fonction de quantité totale (car on a modifié la quantité par la suppression)
         totalQuantity();
       });
-    console.log(kanapStorage);
   }
 }
 
@@ -239,105 +238,66 @@ totalPrice();
 // Formulaire d'information pour la commande
 let form = document.getElementsByClassName("cart__order__form")[0];
 
-function Form() {
-  let emailRegExp = new RegExp("^[a-z0-9.-_]+[@]{1}[a-z0-9.-]+[.]{1}[a-z]{2,4}$");
-  let caractRegExp = new RegExp("^[a-zA-Z. àäéèêëîìïôòöûüùç_-]+$");
-  let addressRegExp = new RegExp("^[0-9]{0,5} [a-zA-Z.-_ àäéèêëîìïôòöûüùç]+$");
-  let cityRegExp = new RegExp("^[A-Za-zàâäéèêëïîôöùûüç '-]+$");
-
-  //Vérification des éléments sur le formulaire
-
-  //Prénom
-  form.firstName.addEventListener("change", function () {
-    validFirstName(this);
-  });
-  const validFirstName = function (firstName) {
-    let testFirstName = caractRegExp.test(firstName.value);
-    let errorMessageFirstName = document.getElementById("firstNameErrorMsg");
-    
-      if (testFirstName) {
-      errorMessageFirstName.innerHTML = "Prénom valide";
-    } else {
-      errorMessageFirstName.innerHTML = "Prénom invalide";
-    }
-  };
-
-  //Nom
-  form.lastName.addEventListener("change", function () {
-    validLastName(this);
-  });
-  const validLastName = function (lastName) {
-    let testLastName = caractRegExp.test(lastName.value);
-    let errorMessageLastName = document.getElementById("lastNameErrorMsg");
-
-    if (testLastName) {
-      errorMessageLastName.innerHTML = "Nom valide";
-    } else {
-      errorMessageLastName.innerHTML = "Nom invalide";
-    }
-  };
-
-  //Adresse
-  form.address.addEventListener("change", function () {
-    validAdress(this);
-  });
-  const validAdress = function (address) {
-    let testAdress = addressRegExp.test(address.value);
-    let errorMessageAdress = document.getElementById("addressErrorMsg");
-
-    if (testAdress) {
-      errorMessageAdress.innerHTML = "Adresse valide";
-    } else {
-      errorMessageAdress.innerHTML = "Adresse invalide";
-    }
-  };
-
-  //Ville
-  form.city.addEventListener("change", function () {
-    validCity(this);
-  });
-  const validCity = function (city) {
-    let testCity = cityRegExp.test(city.value);
-    let errorMessageCity = document.getElementById("cityErrorMsg");
-
-    if (testCity) {
-      errorMessageCity.innerHTML = "Ville valide";
-    } else {
-      errorMessageCity.innerHTML = "Ville invalide";
-    }
-  };
-
-  //Adresse mail
-  form.email.addEventListener("change", function () {
-    validEmail(this);
-  });
-  const validEmail = function (email) {
-    let testEmail = emailRegExp.test(email.value);
-    let errorMessageEmail = document.getElementById("emailErrorMsg");
-
-    if (testEmail) {
-      errorMessageEmail.innerHTML = "Adresse email valide";
-    } else {
-      errorMessageEmail.innerHTML = "Adresse email invalide";
-    }
-  };
-  if(infoContact.firstName.value!="" && infoContact.lastName.value!="" && infoContact.address.value!="" && infoContact.city.value!="" && infoContact.email.value!=""){
-    return true
-  }else{
-    return false
-  };
-}
-Form();
-
 // Bouton COMMANDER
 const order = document.getElementById("order");
 
-/******************************/
-/*Fonction envoi du formulaire*/
-/******************************/
-
-// On envoi le formulaire
 async function submitOrder() {
+  let emailRegExp = new RegExp(
+    "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$"
+  );
+  let charRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
+  let addressRegExp = new RegExp(
+    "^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+"
+  );
+
+  let inputFirstName = document.getElementById("firstName");
+  let firstNameErrorMsg = inputFirstName.nextElementSibling;
+  let hasError = false;
+
+  if (charRegExp.test(inputFirstName.value)) {
+    firstNameErrorMsg.innerHTML = "";
+  } else {
+    firstNameErrorMsg.innerHTML = "Prenom Invalide";
+    hasError = true;
+  }
+
+  let inputLastName = document.getElementById("lastName");
+  let lastNameErrorMsg = inputLastName.nextElementSibling;
+  if (charRegExp.test(inputLastName.value)) {
+    lastNameErrorMsg.innerHTML = "";
+  } else {
+    lastNameErrorMsg.innerHTML = "Nom Invalide.";
+    hasError = true;
+  }
+
+  let inputAddress = document.getElementById("address");
+  let addressErrorMsg = inputAddress.nextElementSibling;
+  if (addressRegExp.test(inputAddress.value)) {
+    addressErrorMsg.innerHTML = "";
+  } else {
+    addressErrorMsg.innerHTML = "Adresse Invalide";
+    hasError = true;
+  }
+
+  let inputCity = document.getElementById("city");
+  let cityErrorMsg = inputCity.nextElementSibling;
+  if (charRegExp.test(inputCity.value)) {
+    cityErrorMsg.innerHTML = "";
+  } else {
+    cityErrorMsg.innerHTML = "Ville Invalide.";
+    hasError = true;
+  }
+
+  let inputEmail = document.getElementById("email");
+  let emailErrorMsg = inputEmail.nextElementSibling;
+  if (emailRegExp.test(inputEmail.value)) {
+    emailErrorMsg.innerHTML = "";
+  } else {
+    emailErrorMsg.innerHTML = "Email Invalide.";
+    hasError = true;
+  }
+
+  if (hasError) return;
   //Mise en place d'un objet pour les infos du formulaire
   const infoContact = {
     firstName: document.getElementById("firstName").value,
@@ -346,18 +306,19 @@ async function submitOrder() {
     city: document.getElementById("city").value,
     email: document.getElementById("email").value,
   };
-  
-  //Création d'un tableau pour les éléments du local storage
+
+  //Création d'un array pour les éléments du local storage
   let kanap = [];
   for (let i = 0; i < kanapStorage.length; i++) {
     kanap.push(kanapStorage[i].idKanap);
   }
 
-  //Mise en place d'un objet pour avoir les infos contact + les produits
+  //Mise en place d'un objet pour les avoir les infos contact + les produits
   const infoRecap = {
     products: kanap,
     contact: infoContact,
   };
+
   let response = await fetch(url + "order", {
     // Ajout de la méthode
     method: "POST",
@@ -368,15 +329,12 @@ async function submitOrder() {
     // Ajout de titre à la requête
     headers: { "Content-type": "application/json; charset=UTF-8" },
   });
-
   let data = await response.json();
-  const orderId = data.orderId;
-    // Au clic, envoi du formulaire avec un order ID
-    window.location.href = "./confirmation.html?orderId=" + orderId;
+  orderId = data.orderId;
+  //Au clic, on est redirigé vers la page de confirmation
+  window.location.href = "./confirmation.html?orderId=" + orderId;
 }
-  order.addEventListener("click", async function (event) {
+order.addEventListener("click", function (event) {
   event.preventDefault();
-
   submitOrder();
-
 });
