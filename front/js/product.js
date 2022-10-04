@@ -61,7 +61,16 @@ async function InfoProduct() {
 /**************************/
 //Ajout d'un canapé au panier avec le bouton addButton
 let addToCartButton = document.getElementById('addToCart');
-addToCartButton.addEventListener('click', ajoutPanier);
+if(addToCartButton != null){
+    addToCartButton.addEventListener("click", (e) => {
+        let color = document.querySelector("#colors").value
+        let quantity = document.querySelector("#quantity").value
+        if (color == null || color === '' || quantity == null || quantity == 0) {
+            alert("Selectionnez une couleur et/ou insérez une quantité")
+        }
+    })
+}
+    addToCartButton.addEventListener('click', ajoutPanier);
 
 
 // On établit le local storage
@@ -80,7 +89,6 @@ function ajoutPanier() {
             //constante du choix de la quantité
             const quantityChoice = document.querySelector('#quantity');
 
-            console.log(colorChoice.value === '');
             //Mise en place de la condition où les valeurs color + quantity doivent être établies
             // Si la valeur quantity est renseignée et entre 1 et 100 :
             if (
@@ -90,7 +98,6 @@ function ajoutPanier() {
             ) {
                 // On affiche la quantité
                 let quantityChoiceKanap = parseInt(quantityChoice.value);
-                console.log(quantityChoiceKanap);
                 
                 // On déclare l'objet kanap avec un ID, la couleur et la quantité choisis
                 let kanap = {
@@ -106,22 +113,20 @@ function ajoutPanier() {
                 for (let i = 0; i < kanapStorage.length; i++) {
                     if (
                         kanapStorage[i].idKanap === kanap.idKanap &&
-                        kanapStorage[i].colorChoiceKanap ===
-                            kanap.colorChoiceKanap
+                        kanapStorage[i].colorChoiceKanap === kanap.colorChoiceKanap
                     ) {
                         presenceProduit = true;
                         // On récupère l'index
                         indexProduit = i;
                     }
                 }
-                // Si le produit est présent on récupère la quantité choisie eto n l'incrémente
+                // Si le produit est présent on récupère la quantité choisie et on l'incrémente
                 if (presenceProduit) {
-                    kanapStorage[indexProduit].quantityKanap +=
-                        kanap.quantityKanap;
-                // Sinon on affiche le produit et on l'ajoute à la fin du tableau 
+                    kanapStorage[indexProduit].quantityKanap += kanap.quantityKanap;
+                // Sinon on ajoute à la fin du tableau 
                 } else {
-                    console.log(kanapStorage);
                     kanapStorage.push(kanap);
+                    alert("Produit ajouté au panier!");
                 }
                 // On met à jour le localStorage
                 // On enregistre le canapé dans le local storage
@@ -133,4 +138,4 @@ function ajoutPanier() {
                 // Au clic on redirige l'utilisateur vers la page panier
                 window.location.href = './cart.html';
             }
-        };
+};

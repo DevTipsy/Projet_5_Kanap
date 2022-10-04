@@ -232,12 +232,13 @@ async function totalPrice() {
 // On appelle la fonction
 totalPrice();
 
-// Formulaire d'information pour le commande
-let form = document.getElementsByClassName("cart__order__form")[0];
 
 /************************************************/
 /*Fonction création et paramétrage du formulaire*/
 /************************************************/
+// Formulaire d'information pour la commande
+let form = document.getElementsByClassName("cart__order__form")[0];
+
 function Form() {
   let emailRegExp = new RegExp("^[a-z0-9.-_]+[@]{1}[a-z0-9.-]+[.]{1}[a-z]{2,4}$");
   let caractRegExp = new RegExp("^[a-zA-Z. àäéèêëîìïôòöûüùç_-]+$");
@@ -253,8 +254,8 @@ function Form() {
   const validFirstName = function (firstName) {
     let testFirstName = caractRegExp.test(firstName.value);
     let errorMessageFirstName = document.getElementById("firstNameErrorMsg");
-
-    if (testFirstName) {
+    
+      if (testFirstName) {
       errorMessageFirstName.innerHTML = "Prénom valide";
     } else {
       errorMessageFirstName.innerHTML = "Prénom invalide";
@@ -320,6 +321,11 @@ function Form() {
       errorMessageEmail.innerHTML = "Adresse email invalide";
     }
   };
+  if(infoContact.firstName.value!="" && infoContact.lastName.value!="" && infoContact.address.value!="" && infoContact.city.value!="" && infoContact.email.value!=""){
+    return true
+  }else{
+    return false
+  };
 }
 Form();
 
@@ -340,7 +346,7 @@ async function submitOrder() {
     city: document.getElementById("city").value,
     email: document.getElementById("email").value,
   };
-
+  
   //Création d'un tableau pour les éléments du local storage
   let kanap = [];
   for (let i = 0; i < kanapStorage.length; i++) {
@@ -362,17 +368,15 @@ async function submitOrder() {
     // Ajout de titre à la requête
     headers: { "Content-type": "application/json; charset=UTF-8" },
   });
-  let data = await response.json();
-  console.log(data);
-  orderId = data.orderId;
-  console.log(orderId);
-}
 
-order.addEventListener("click", function (event) {
+  let data = await response.json();
+  const orderId = data.orderId;
+    // Au clic, envoi du formulaire avec un order ID
+    window.location.href = "./confirmation.html?orderId=" + orderId;
+}
+  order.addEventListener("click", async function (event) {
   event.preventDefault();
 
   submitOrder();
 
-  // Au clic, envoi du formulaire avec un order ID
-  window.location.href = "./confirmation.html?orderId=" + orderId;
 });
