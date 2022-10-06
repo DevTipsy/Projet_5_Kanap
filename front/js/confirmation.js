@@ -10,7 +10,7 @@ function Confirmation() {
     const urlOrder = urlParams.get("orderId");
   
     // Récupération du numéro de commande et inscription dans le HTML
-    document.getElementById("orderId").innerHTML = urlOrder;
+    document.getElementById("orderId").textContent = urlOrder;
   
     //Nettoyage du local storage
     localStorage.clear();

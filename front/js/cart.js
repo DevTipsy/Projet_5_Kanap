@@ -16,18 +16,18 @@ if (localStorage.getItem("kanapStorage") != null) {
   kanapStorage = [];
 }
 
-
 /******************************************************************/
 /*Fonction création et affichage des infos produits dans le panier*/
 /******************************************************************/
+
 // Appel de la fonction
 getLocalStorage();
 
 // Création de la fonction getLocalStorage
 function getLocalStorage() {
-  // On créé la boucle qui va parcourir le local storage et afficher les kanap
+  // On créé la boucle qui va afficher les kanap dans le panier grâce à leur titre et infos
   for (let i = 0; i < kanapStorage.length; i++) {
-    // On récupère les articles dans l'API et on affiche leurs infos grâce a l'ID
+    // On récupère les articles et on affiche leurs infos grâce a l'ID
     fetch(url + kanapStorage[i].idKanap)
       .then((resp) => resp.json())
       .then(function (data) {
@@ -73,17 +73,17 @@ function getLocalStorage() {
         // Insertion du titre h2
         let productTitle = document.createElement("h2");
         productItemContentTitlePrice.appendChild(productTitle);
-        productTitle.innerHTML = nameKanap;
+        productTitle.innerText = nameKanap;
 
         // Insertion de la couleur
         let productColor = document.createElement("p");
-        productColor.innerHTML = kanapStorage[i].colorChoiceKanap;
+        productColor.innerText = kanapStorage[i].colorChoiceKanap;
         productColor.style.fontSize = "20px";
         productTitle.appendChild(productColor);
 
         // Insertion du prix
         let productPrice = document.createElement("p");
-        productPrice.innerHTML = price + "  " + " €";
+        productPrice.innerText = price + "  " + " €";
         productItemContentTitlePrice.appendChild(productPrice);
 
         // Insertion de l'élément "div"
@@ -102,7 +102,7 @@ function getLocalStorage() {
         // Insertion de "Qté : "
         let productQty = document.createElement("p");
         productItemContentSettingsQuantity.appendChild(productQty);
-        productQty.innerHTML = "Qté : ";
+        productQty.innerText = "Qté : ";
 
         // Insertion de la quantité via l'input et avec les restrictions d'attributs
         let productQuantity = document.createElement("input");
@@ -116,10 +116,13 @@ function getLocalStorage() {
         // On écoute le bouton input pour changer la quantité au clic
         productQuantity.addEventListener("change", modifyQuantity);
 
+
         /**************************************/
         /*Fonction modification de la quantité*/
         /**************************************/
         function modifyQuantity(e) {
+          // On affiche la quantité modifiée dynamiquement
+          console.log(e);
 
           // On déclare la valeur entrée à partir du clavier
           let valueNewQuantity = e.path[0].value;
@@ -135,7 +138,7 @@ function getLocalStorage() {
             // On appelle les fonctions pour la quantité et le prix total
             totalQuantity();
             totalPrice();
-            // Sinon on affiche un message d'erreur si la condition n'est pas respectée
+            // Sinon on affiche un message d'erreur
           } else {
             alert(
               `Vous ne pouvez commander qu'un nombre d'article compris entre 1 et 100`
@@ -156,13 +159,9 @@ function getLocalStorage() {
         let productSupprimer = document.createElement("p");
         productItemContentSettingsDelete.appendChild(productSupprimer);
         productSupprimer.className = "deleteItem";
-        productSupprimer.innerHTML = "Supprimer";
+        productSupprimer.innerText = "Supprimer";
         // On écoute le bouton "supprimer"
         productSupprimer.addEventListener("click", deleteItemFromCart);
-
-        /***********************************/
-        /*Fonction suppression des produits*/
-        /***********************************/
         // Création de la fonction de suppression de l'article dans le localStorage et le panier
         function deleteItemFromCart() {
           let idProduitDelete = kanapStorage[i].idKanap;
@@ -187,24 +186,25 @@ function getLocalStorage() {
   }
 }
 
+
 /***************************************************/
 /*Fonction calcul de la quantité totale de produits*/
 /***************************************************/
 //Fonction pour avoir le nombre total de produits
 function totalQuantity() {
-  // On récupère la quantité de tous les articles dans le panier
   let quantityItem = document.getElementsByClassName("itemQuantity");
   let number = 0;
-// On parcourt le tableau des quantité précédent
+
   for (let i = 0; i < quantityItem.length; i++) {
     number += parseInt(quantityItem[i].value);
   }
-  // On déclare la variable et on l'insère via innerHTML, puis affichage de la quantité totale via l'ID
+  // On déclare la variable et on l'insère
   let totalNumber = document.getElementById("totalQuantity");
-  totalNumber.innerHTML = number;
+  totalNumber.innerText = number;
 }
 // On appelle les fonctions pour les totaux
 totalQuantity();
+
 
 /***************************************/
 /*Fonction calcul du prix total des produits*/
@@ -226,7 +226,7 @@ async function totalPrice() {
   }
   // On insère le prix total
   totalPriceProduct = document.getElementById("totalPrice");
-  totalPriceProduct.innerHTML = total;
+  totalPriceProduct.innerText = total;
 }
 // On appelle la fonction
 totalPrice();
@@ -235,7 +235,7 @@ totalPrice();
 /************************************************/
 /*Fonction création et paramétrage du formulaire*/
 /************************************************/
-// Formulaire d'information pour la commande
+// Formulaire d'information pour le commande
 let form = document.getElementsByClassName("cart__order__form")[0];
 
 // Bouton COMMANDER
@@ -243,57 +243,55 @@ const order = document.getElementById("order");
 
 async function submitOrder() {
   let emailRegExp = new RegExp(
-    "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$"
-  );
+    "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$");
   let charRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
-  let addressRegExp = new RegExp(
-    "^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+"
-  );
+  let addressRegExp = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
+  let p = document.createElement("p");
 
   let inputFirstName = document.getElementById("firstName");
   let firstNameErrorMsg = inputFirstName.nextElementSibling;
   let hasError = false;
 
   if (charRegExp.test(inputFirstName.value)) {
-    firstNameErrorMsg.innerHTML = "";
+    firstNameErrorMsg.textContent = "";
   } else {
-    firstNameErrorMsg.innerHTML = "Prenom Invalide";
+    firstNameErrorMsg.textContent = "Prenom Invalide";
     hasError = true;
   }
 
   let inputLastName = document.getElementById("lastName");
   let lastNameErrorMsg = inputLastName.nextElementSibling;
   if (charRegExp.test(inputLastName.value)) {
-    lastNameErrorMsg.innerHTML = "";
+    lastNameErrorMsg.textContent = "";
   } else {
-    lastNameErrorMsg.innerHTML = "Nom Invalide.";
+    lastNameErrorMsg.textContent = "Nom Invalide.";
     hasError = true;
   }
 
   let inputAddress = document.getElementById("address");
   let addressErrorMsg = inputAddress.nextElementSibling;
   if (addressRegExp.test(inputAddress.value)) {
-    addressErrorMsg.innerHTML = "";
+    addressErrorMsg.textContent = "";
   } else {
-    addressErrorMsg.innerHTML = "Adresse Invalide";
+    addressErrorMsg.textContent = "Adresse Invalide";
     hasError = true;
   }
 
   let inputCity = document.getElementById("city");
   let cityErrorMsg = inputCity.nextElementSibling;
   if (charRegExp.test(inputCity.value)) {
-    cityErrorMsg.innerHTML = "";
+    cityErrorMsg.textContent = "";
   } else {
-    cityErrorMsg.innerHTML = "Ville Invalide.";
+    cityErrorMsg.textContent = "Ville Invalide.";
     hasError = true;
   }
 
   let inputEmail = document.getElementById("email");
   let emailErrorMsg = inputEmail.nextElementSibling;
   if (emailRegExp.test(inputEmail.value)) {
-    emailErrorMsg.innerHTML = "";
+    emailErrorMsg.textContent = "";
   } else {
-    emailErrorMsg.innerHTML = "Email Invalide.";
+    emailErrorMsg.textContent = "Email Invalide.";
     hasError = true;
   }
 
@@ -331,9 +329,10 @@ async function submitOrder() {
   });
   let data = await response.json();
   orderId = data.orderId;
-  //Au clic, on est redirigé vers la page de confirmation
+  //AU CLICK ENVOI SUR LA PAGE CONFIRMATION AVEC L'ORDERID
   window.location.href = "./confirmation.html?orderId=" + orderId;
 }
+
 order.addEventListener("click", function (event) {
   event.preventDefault();
   submitOrder();
